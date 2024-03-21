@@ -16,7 +16,7 @@ export function useNftList(address: string | null) {
     const updateTokens = async (address: string) => {
         setIsLoading(true)
         try {
-            const { tokens, balance } = await getTokensFor("0xFF8569614F371720E18a3375e174eED5fCb78254")
+            const { tokens, balance } = await getTokensFor(address)
             setTokens(tokens)
             setBalance(balance)
         }
