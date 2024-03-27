@@ -1,12 +1,16 @@
 /** @type {import('tailwindcss').Config} */
+
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
   darkMode: ["class"],
-  content: [
-    './src/**/*.{ts,tsx}',
-    './@/**/*.{ts,tsx}',
-  ],
+  content: ["./src/**/*.{ts,tsx}", "./@/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
+    screens: {
+      xs: "400px",
+      ...defaultTheme.screens,
+    },
     container: {
       center: true,
       padding: "2rem",
@@ -29,9 +33,21 @@ module.exports = {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        tertiary: {
+          DEFAULT: "hsl(var(--tertiary))",
+          foreground: "hsl(var(--tertiary-foreground))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -48,6 +64,10 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        slayercard: {
+          DEFAULT: "hsl(var(--slayercard))",
+          foreground: "hsl(var(--slayercard-foreground))",
         },
       },
       borderRadius: {
@@ -69,7 +89,11 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      fontFamily: {
+        logo: ["Skranji", "system-ui"],
+        logo2: ["MedievalSharp", "cursive"],
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};
