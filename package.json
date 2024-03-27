@@ -29,7 +29,8 @@
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "usehooks-ts": "^3.0.1",
-    "viem": "^2.8.4"
+    "viem": "^2.8.4",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@parcel/packager-raw-url": "2.12.0",
