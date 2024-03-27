@@ -62,7 +62,7 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "start": "parcel src/index.html --open",
-    "build": "parcel build src/index.html --public-url https://mrwhittleman.github.io/slayersguild/"
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html --public-url https://mrwhittleman.github.io/slayersguild/"
   }
 }
