@@ -3,11 +3,11 @@ import App from "@/App";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./Layout";
-import OfferingPage from "./Pages/Offering";
-import AboutPage from "./Pages/About";
-import MySlayerPage from "./Pages/MySlayer";
-import GalleryPage from "./Pages/Gallery";
-import AltarPage from "./Pages/Altar";
+import OfferingPage from "./_pages/Offering";
+import AboutPage from "./_pages/About";
+import MySlayerPage from "./_pages/MySlayer";
+import GalleryPage from "./_pages/Gallery";
+import AltarPage from "./_pages/Altar";
 
 const router = createBrowserRouter([
   {

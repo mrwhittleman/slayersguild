@@ -1,4 +1,4 @@
-import OfferingPage from "./Pages/Offering";
+import OfferingPage from "./_pages/Offering";
 
 export default function App() {
   return (
