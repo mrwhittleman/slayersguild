@@ -36,7 +36,7 @@ export async function onRequest({ request, env }: { request: Request, env: Env }
 
         const query = new URL(request.url)
         const { cursor: lastItemPrimary, limit } = pagiginationSchema.parse({
-            cursor: query.searchParams.has('cursor') ? query.searchParams.get('cursor') : undefined,
+            cursor: query.searchParams.get('cursor') ?? undefined,
             limit: Number(query.searchParams.get('limit') ?? 100)
         })
 
@@ -46,12 +46,9 @@ export async function onRequest({ request, env }: { request: Request, env: Env }
             sortingField: 'tokenId',
             sortingDirection: 'asc'
         }
-        if (lastItemPrimary) {
-            apiRequest.lastItemPrimary = lastItemPrimary
-        }
+        if (lastItemPrimary) { apiRequest.lastItemPrimary = lastItemPrimary }
 
         const apiQueryParams = new URLSearchParams(apiRequest);
-
         const result = await fetch(`https://api.vorj.app/main/v2/erc721/contracts/${encodeURIComponent(env.SLAYER_CONTRACT)}?${apiQueryParams.toString()}`, {
             method: 'GET',
             headers: {
@@ -61,8 +58,8 @@ export async function onRequest({ request, env }: { request: Request, env: Env }
         }).then(response => response.json()) as Erc721Result
 
         if ('message' in result) { throw new Error(result.message) }
-        const cursor = apiRequest.sortingField && result.page.length > 0 && result.page[result.page.length - 1]![apiRequest.sortingField]
 
+        const cursor = apiRequest.sortingField && result.page.length > 0 && result.page[result.page.length - 1]![apiRequest.sortingField]
         return new Response(JSON.stringify({ ...result, cursor }), {
             status: 200,
             headers: {
