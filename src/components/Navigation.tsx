@@ -39,9 +39,9 @@ export default function Navigation() {
 
   return (
     <>
-      <nav className="flex w-full px-4 lg:px-12 py-4 bg-accent border-b">
+      <nav className="flex w-full px-4 lg:px-12 py-4 bg-accent border-b border-tertiary">
         <div className="flex lg:hidden items-center w-1/4">
-          <Sheet onOpenChange={() => setIsOpen(!isOpen)}>
+          <Sheet onOpenChange={() => setIsOpen((prevIsOpen) => !prevIsOpen)}>
             <SheetTrigger>
               <div className="flex flex-col gap-1">
                 <span
