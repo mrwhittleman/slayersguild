@@ -8,6 +8,7 @@ import AboutPage from "./pages/About";
 import MySlayerPage from "./pages/MySlayer";
 import GalleryPage from "./pages/Gallery";
 import AltarPage from "./pages/Altar";
+import SlayerDetailsPage from "./pages/SlayerDetails";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/my-slayer", element: <MySlayerPage /> },
       { path: "/gallery", element: <GalleryPage /> },
       { path: "/altar", element: <AltarPage /> },
+      { path: "/slayer-details/:id", element: <SlayerDetailsPage /> },
     ],
   },
 ]);
