@@ -16,19 +16,12 @@ import {
   SlayerCardContent,
 } from "@/components/ui/slayercard";
 import Spinner from "@/components/Spinner";
-import { NftListType } from "@/types/types";
+import { NftListType, NftAttributeType } from "@/types/types";
+import { useMetadata } from "@/hooks/useMetadata";
 
-import metadata from "@/data/metadata.json";
-
-const findMetadata = (tokenId: number) => {
-  const foundMetadata = metadata.find((meta) => meta.tokenId === tokenId);
-
-  if (!foundMetadata) {
-    throw new Error(`No metadata found for token ID ${tokenId}`);
-  }
-
-  return foundMetadata;
-};
+// Base URL for the metadata of each slayer TO BE PUT IN .ENV FILE!!!
+const METADATA_URL =
+  "https://4wz7nuijhm67qgxnqw54egbv52zocgq3qei3gbb7la5vuvowh47q.arweave.net/5bP20Qk7Pfga7YW7whg17rLhGhuBEbMEP1g7WlXWPz8/";
 
 /* filling up the bar for the requested skill line either will filled or blank skill points */
 const skillPointHud = (skill: number) => {
@@ -57,7 +50,6 @@ const skillPointHud = (skill: number) => {
       )),
   ];
 };
-
 /* check for the elemental class and return the correct icon */
 const elementalClass = (elemental: string) => {
   return elemental === "Earth" ? (
@@ -74,17 +66,18 @@ const elementalClass = (elemental: string) => {
 export default function SlayerCardGallery({
   slayer,
   className,
-  loading,
   history,
 }: {
   slayer: NftListType;
-  className?: any;
-  loading?: boolean;
+  className?: string;
   history?: { limit: string; cursor?: string };
 }) {
-  console.log("SLAYERCARD: ", history);
+  /* TO REMOVE!!! */
+  /* console.log("SLAYERCARD: ", history); */
   const navigate = useNavigate();
-  const slayerMetadata = findMetadata(Number(slayer.tokenId));
+  const { metadata: slayerMetadata, loading } = useMetadata(
+    Number(slayer.tokenId)
+  );
 
   // Handle the click event for the card and redirect to the slayer details page
   const handleClick = () => {
@@ -96,7 +89,7 @@ export default function SlayerCardGallery({
   // Find the attribute by the trait type
   const findAttribute = (trait_type: string) => {
     return slayerMetadata?.attributes.find(
-      (attribute) => attribute.trait_type === trait_type
+      (attribute: NftAttributeType) => attribute.trait_type === trait_type
     );
   };
 
@@ -108,28 +101,28 @@ export default function SlayerCardGallery({
       onClick={handleClick}
     >
       <SlayerCardImage>
-        {!loading && slayerMetadata ? (
+        {!loading && METADATA_URL && slayerMetadata ? (
           <img
-            src={`https://nfts.vechainstats.com/xnode_slayers/${slayerMetadata.tokenId}.webp`}
+            src={METADATA_URL + slayerMetadata.tokenId + ".jpg"}
             alt={slayerMetadata.name}
-            width={500}
+            width={640}
             className="flex w-[640px] max-h-sm"
           />
         ) : (
-          <div className="flex w-full h-[230px] justify-center items-center bg-white/15">
+          <div className="flex w-full h-[260px] justify-center items-center bg-white/15">
             <Spinner />
           </div>
         )}
       </SlayerCardImage>
       {!loading ? (
         <SlayerCardContent className="border-b">
-          <h2 className="text-xl font-normal">{slayerMetadata?.name}</h2>
+          <h2 className="text-lg font-normal">{slayerMetadata?.name}</h2>
           <p className="text-muted-foreground text-sm">
             Rank: {slayerMetadata?.rank}
           </p>
         </SlayerCardContent>
       ) : (
-        <div className="flex w-full h-[70px] justify-center items-center">
+        <div className="flex w-full h-[65px] justify-center items-center">
           <Spinner />
         </div>
       )}
@@ -166,7 +159,7 @@ export default function SlayerCardGallery({
           </div>
         </SlayerCardHud>
       ) : (
-        <div className="flex w-full h-[95px] justify-center items-center">
+        <div className="flex w-full h-[80px] justify-center items-center">
           <Spinner />
         </div>
       )}
@@ -177,19 +170,18 @@ export default function SlayerCardGallery({
 export function SlayerCardDetails({
   slayer,
   className,
-  loading,
 }: {
   slayer: NftListType;
-  className?: any;
-  loading?: boolean;
+  className?: string;
 }) {
-  const navigate = useNavigate();
-  const slayerMetadata = findMetadata(Number(slayer.tokenId));
+  const { metadata: slayerMetadata, loading } = useMetadata(
+    Number(slayer.tokenId)
+  );
 
   // Find the attribute by the trait type
   const findAttribute = (trait_type: string) => {
     return slayerMetadata?.attributes.find(
-      (attribute) => attribute.trait_type === trait_type
+      (attribute: NftAttributeType) => attribute.trait_type === trait_type
     );
   };
 
@@ -200,15 +192,15 @@ export function SlayerCardDetails({
       key={slayer.tokenId}
     >
       <SlayerCardImage>
-        {!loading && slayerMetadata ? (
+        {!loading && METADATA_URL && slayerMetadata ? (
           <img
-            src={`https://nfts.vechainstats.com/xnode_slayers/${slayerMetadata.tokenId}.webp`}
+            src={METADATA_URL + slayerMetadata.tokenId + ".jpg"}
             alt={slayerMetadata.name}
             width={500}
             className="flex w-[500px] max-h-sm"
           />
         ) : (
-          <div className="flex w-full h-[230px] justify-center items-center bg-white/15">
+          <div className="flex w-[500px] h-[500px] justify-center items-center bg-white/15">
             <Spinner />
           </div>
         )}
@@ -221,7 +213,7 @@ export function SlayerCardDetails({
           </p>
         </SlayerCardContent>
       ) : (
-        <div className="flex w-full h-[70px] justify-center items-center">
+        <div className="flex w-[500px] h-[65px] justify-center items-center">
           <Spinner />
         </div>
       )}
@@ -258,7 +250,7 @@ export function SlayerCardDetails({
           </div>
         </SlayerCardHud>
       ) : (
-        <div className="flex w-full h-[95px] justify-center items-center">
+        <div className="flex w-full h-[80px] justify-center items-center">
           <Spinner />
         </div>
       )}

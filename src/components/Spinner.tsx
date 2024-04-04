@@ -1,10 +1,14 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
-const Spinner = () => {
+const Spinner = ({ className }: { className?: string }) => {
   return (
-    <>
-      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border"></div>
-    </>
+    <div
+      className={cn(
+        "animate-spin rounded-full h-8 w-8 border-b-2 border",
+        className
+      )}
+    ></div>
   );
 };
 

@@ -28,12 +28,14 @@ export default function Layout() {
         disableTransitionOnChange
       >
         <DappKitContainer>
-          <main className="flex flex-col items-center w-full min-h-screen">
-            <Navigation />
-            <div className="flex w-full h-full px-4 lg:px-12 py-12">
-              <Outlet />
+          <main className="flex justify-center">
+            <div className="flex flex-col items-center w-full max-w-10xl min-h-screen">
+              <Navigation />
+              <div className="flex w-full px-4 2xl:px-12 4k:px-0 py-12">
+                <Outlet />
+              </div>
+              {/* <Footer /> */}
             </div>
-            {/* <Footer /> */}
           </main>
           <Toaster />
         </DappKitContainer>
