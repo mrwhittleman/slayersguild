@@ -10,6 +10,9 @@ module.exports = {
     screens: {
       xs: "400px",
       ...defaultTheme.screens,
+      "1k": "1920px",
+      "2k": "2560px",
+      "4k": "2600px",
     },
     container: {
       center: true,
@@ -92,6 +95,11 @@ module.exports = {
       fontFamily: {
         logo: ["Skranji", "system-ui"],
         logo2: ["MedievalSharp", "cursive"],
+      },
+      maxWidth: {
+        "8xl": "1650px",
+        "9xl": "1920px",
+        "10xl": "2560px",
       },
     },
   },
