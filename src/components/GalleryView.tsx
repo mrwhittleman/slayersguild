@@ -44,7 +44,7 @@ const GalleryView = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   // API URL for fetching NFTs
-  const apiUrl = "https://2d6aa0e1.slayersguild.pages.dev/api/nfts";
+  const apiUrl = "https://slayersguild-b60.pages.dev/api/nfts";
 
   // Number of items to display depeding on device width
   const PER_PAGE = useMemo(() => {
