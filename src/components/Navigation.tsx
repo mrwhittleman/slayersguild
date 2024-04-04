@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook } from "@fortawesome/free-solid-svg-icons";
+import { faBook, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import Wallet from "@/components/Wallet";
-import logo from "@/assets/logo-test.png";
+import Logo from "@/assets/VSG-LOGO_1.png";
 import {
   Sheet,
   SheetContent,
@@ -12,6 +12,7 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 type Link = {
   name: string;
@@ -25,101 +26,117 @@ const links: Link = [
   { name: "My Slayers", path: "/my-slayer" },
   { name: "Slayer Gallery", path: "/gallery" },
   { name: "Altar of Sacrifice", path: "/altar" },
-  { name: "About", path: "/about" },
-  {
-    name: "Documentation",
-    icon: <FontAwesomeIcon icon={faBook} />,
-    path: "https://docs.slayersguild.io/",
-    options: { target: "_blank", rel: "noreferrer" },
-  },
 ];
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   return (
     <>
-      <nav className="flex w-full px-4 lg:px-12 py-4 bg-accent border-b border-tertiary">
-        <div className="flex lg:hidden items-center w-1/4">
-          <Sheet onOpenChange={() => setIsOpen((prevIsOpen) => !prevIsOpen)}>
-            <SheetTrigger>
-              <div className="flex flex-col gap-1">
-                <span
-                  className={`block w-6 h-0.5 bg-tertiary transform transition-transform duration-500 ${
-                    isOpen ? "rotate-45 translate-y-2" : ""
-                  }`}
-                ></span>
-                <span
-                  className={`block w-6 h-0.5 bg-tertiary transform transition-transform duration-300 ${
-                    isOpen ? "opacity-0" : ""
-                  }`}
-                ></span>
-                <span
-                  className={`block w-6 h-0.5 bg-tertiary transform transition-transform duration-500 ${
-                    isOpen ? "-rotate-45 -translate-y-1" : ""
-                  }`}
-                ></span>
+      <nav className="relative flex flex-col w-full px-4 lg:px-12 py-4 bg-accent border-b border-tertiary">
+        <div className="flex">
+          {/* LOGO */}
+          <div className="flex basis-2/5 lg:basis-1/2 shrink">
+            <Link to={"/"} className="flex items-center gap-2 lg:gap-4">
+              <img
+                src={Logo}
+                alt="Slayers Guild Logo"
+                height={64}
+                className="h-16"
+              />
+              <div className="hidden sm:flex flex-col self-end">
+                <h2 className="text-sm font-thin tracking-widest">Vechain</h2>
+                <h1 className="text-2xl xl:text-4xl 2xl:text-5xl font-thin font-logo2">
+                  Slayers Guild
+                </h1>
               </div>
-            </SheetTrigger>
-            <SheetContent side="top" className="w-full h-full">
-              <SheetHeader>
-                <SheetTitle className="flex w-full items-center justify-center">
-                  <Link to={"/"}>
-                    <img src={logo} alt="Slayers Guild Logo" className="w-12" />
-                  </Link>
-                </SheetTitle>
-              </SheetHeader>
-              <div className="flex flex-col w-full h-full items-center justify-center pb-24 pt-12">
-                <ul className="flex flex-col w-full h-full items-center justify-around">
-                  {links.map((link) => (
-                    <li key={link.name}>
-                      <SheetClose asChild>
-                        <Link
-                          {...link.options}
-                          to={link.path}
-                          className="text-2xl"
-                        >
-                          {link.icon ? <>{link.icon}</> : <>{link.name}</>}
-                        </Link>
-                      </SheetClose>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-        <section className="flex lg:w-fit w-full justify-center lg:justify-start">
-          <Link to={"/"} className="flex gap-4 items-center">
-            <img src={logo} alt="Slayers Guild Logo" className="w-12" />
-            <div className="hidden sm:flex flex-col">
-              <h2 className="text-sm lg:text-sm font-thin tracking-widest">
-                Vechain
-              </h2>
-              <h1 className="text-2xl md:text-3xl xl:text-5xl font-thin font-logo2">
-                Slayers Guild
-              </h1>
+            </Link>
+          </div>
+          {/* MOBILE NAVIGATION */}
+          {isMobile && (
+            <div className="flex basis-1/5 items-center justify-center">
+              <Sheet
+                onOpenChange={() => setIsOpen((prevIsOpen) => !prevIsOpen)}
+              >
+                <SheetTrigger>
+                  {/* Hamburger Button */}
+                  <div className="flex flex-col gap-2">
+                    <span
+                      className={`block w-10 h-0.5 rounded-full bg-tertiary-foreground transform transition-transform duration-500 ${
+                        isOpen ? "rotate-45 translate-y-2" : ""
+                      }`}
+                    ></span>
+                    <span
+                      className={`block w-10 h-0.5 rounded-full bg-tertiary-foreground transition-transform duration-300 ${
+                        isOpen ? "opacity-0" : ""
+                      }`}
+                    ></span>
+                    <span
+                      className={`block w-10 h-0.5 rounded-full bg-tertiary-foreground transition-transform duration-500 ${
+                        isOpen ? "-rotate-45 -translate-y-1" : ""
+                      }`}
+                    ></span>
+                  </div>
+                </SheetTrigger>
+                <SheetContent side="top" className="w-full h-full">
+                  <SheetHeader className="h-1/6 items-center justify-center">
+                    <SheetTitle>
+                      {/* MOBILE LOGO */}
+                      <Link to={"/"}>
+                        <img
+                          src={Logo}
+                          alt="Slayers Guild Logo"
+                          height={64}
+                          className="h-16"
+                        />
+                      </Link>
+                    </SheetTitle>
+                  </SheetHeader>
+                  {/* MOBILE NAVIGATION LINKS */}
+                  <ul className="flex flex-col w-full h-5/6 items-center justify-around">
+                    {links.map((link) => (
+                      <li key={link.name}>
+                        <SheetClose asChild>
+                          <Link
+                            {...link.options}
+                            to={link.path}
+                            className="text-2xl"
+                          >
+                            {link.icon ? <>{link.icon}</> : <>{link.name}</>}
+                          </Link>
+                        </SheetClose>
+                      </li>
+                    ))}
+                  </ul>
+                </SheetContent>
+              </Sheet>
             </div>
-          </Link>
-        </section>
-        <section className="flex flex-1 items-center justify-center">
-          <ul className="gap-8 hidden lg:flex">
+          )}
+          {/* WALLET */}
+          <div className="flex basis-2/5 lg:basis-1/2 shrink justify-end items-center">
+            <Wallet mobile={isMobile}>
+              <FontAwesomeIcon icon={faRightToBracket} />
+              <span className="hidden sm:flex ml-2">Connect</span>
+            </Wallet>
+          </div>
+        </div>
+        {/* DESKTOP NAVIGATION */}
+        <div className="hidden absolute bottom-2 lg:flex transform -translate-x-1/2 left-1/2">
+          <ul className="gap-8 flex">
             {links.map((link) => (
               <li key={link.name}>
                 <Link
                   {...link.options}
                   to={link.path}
-                  className="relative text-md font-normal w-fit block after:block after:content-[''] after:absolute after:h-[5px] after:bg-tertiary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
+                  className="relative text-md font-normal w-fit block after:block after:content-[''] after:absolute after:translate-y-1 after:h-[5px] after:bg-tertiary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
                 >
                   {link.icon ? <>{link.icon}</> : <>{link.name}</>}
                 </Link>
               </li>
             ))}
           </ul>
-        </section>
-        <section className="flex w-1/4 lg:w-fit items-center justify-end">
-          <Wallet />
-        </section>
+        </div>
       </nav>
     </>
   );

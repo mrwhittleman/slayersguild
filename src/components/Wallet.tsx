@@ -4,21 +4,28 @@ import { WalletButton } from "@vechain/dapp-kit-react";
 import { useWalletName } from "@/hooks/useWalletName";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRightToBracket, faBook } from "@fortawesome/free-solid-svg-icons";
+import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
-export default function Wallet() {
+export default function Wallet({
+  children,
+  mobile,
+}: {
+  children?: React.ReactNode;
+  mobile?: boolean;
+}) {
   const { account } = useWallet();
 
-  if (account) return <DisconnectButton />;
-  return <ConnectButton />;
+  if (account) return <DisconnectButton mobile={mobile} />;
+  return <ConnectButton>{children}</ConnectButton>;
 }
 
-export function DisconnectButton() {
+export function DisconnectButton({ mobile }: { mobile?: boolean }) {
   const wallet = useWallet();
   const { name } = useWalletName(wallet.account);
 
   return (
     <WalletButton
+      mobile={mobile}
       address={
         name
           ? name.length <= 8
@@ -30,12 +37,11 @@ export function DisconnectButton() {
   );
 }
 
-export function ConnectButton() {
+export function ConnectButton({ children }: { children?: React.ReactNode }) {
   const modal = useWalletModal();
   return (
     <Button variant="default" onClick={modal.open}>
-      <FontAwesomeIcon icon={faRightToBracket} />
-      <span className="ml-2">Connect</span>
+      {children}
     </Button>
   );
 }
