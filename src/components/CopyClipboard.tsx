@@ -10,12 +10,14 @@ const CopyClipboard = ({ copyData }: { copyData: string }) => {
     try {
       await navigator.clipboard.writeText(copyData);
       toast({
-        title: "Copied to clipboard.",
-        className: "bg-tertiary-foreground border",
+        title: "Success",
+        description: "Transaction ID copied to clipboard.",
+        variant: "success",
       });
     } catch (err) {
       toast({
-        title: "Failed to copy to clipboard.",
+        title: "Error",
+        description: "Something went wrong.",
         variant: "destructive",
       });
     }
