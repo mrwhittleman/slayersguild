@@ -1,4 +1,3 @@
-import Wallet from "@/components/Wallet";
 import { useWalletName } from "@/hooks/useWalletName";
 import { useWallet } from "@vechain/dapp-kit-react";
 import { useNftList } from "@/hooks/useNftList";
@@ -8,8 +7,6 @@ const MySlayerPage = () => {
   const wallet = useWallet();
   const { name } = useWalletName(wallet.account);
   const { balance, isLoading, tokens } = useNftList(wallet.account);
-
-  console.log("tokens", tokens);
 
   if (!wallet.account) {
     return (
