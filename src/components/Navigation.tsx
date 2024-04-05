@@ -43,7 +43,7 @@ export default function Navigation() {
                 src={Logo}
                 alt="Slayers Guild Logo"
                 height={64}
-                className="h-16"
+                className="h-12 sm:h-16"
               />
               <div className="hidden sm:flex flex-col self-end">
                 <h2 className="text-sm font-thin tracking-widest">Vechain</h2>
