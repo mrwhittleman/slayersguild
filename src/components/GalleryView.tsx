@@ -16,7 +16,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import SlayerCardGallery from "./SlayerCards";
+import SlayerCardComponent from "./SlayerCards";
 import { NftListType } from "@/types/types";
 import Spinner from "./Spinner";
 
@@ -39,12 +39,12 @@ const GalleryView = () => {
   const location = useLocation();
   const [nfts, setNfts] = useState<NftListType[]>([]);
   const [cache, setCache] = useState<Record<number, CacheEntry>>({});
-  /*   const [cursor, setCursor] = useState(""); */
-  const [pageIndex, setPageIndex] = useState(1);
+  const [pageIndex, setPageIndex] = useState<number>(1);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   // API URL for fetching NFTs
+  /*   const apiUrl = "https://2d6aa0e1.slayersguild.pages.dev/api/nfts"; */
   const apiUrl = "https://slayersguild-b60.pages.dev/api/nfts";
 
   // Number of items to display depeding on device width
@@ -56,7 +56,7 @@ const GalleryView = () => {
     } else if (window.innerWidth < 768) {
       return 15;
     } else if (window.innerWidth < 1920) {
-      return 20;
+      return 24;
     } else if (window.innerWidth < 2560) {
       return 32;
     } else {
@@ -71,7 +71,7 @@ const GalleryView = () => {
 
   // Fetch NFTs from the NFT-List API
   const fetchNfts = useCallback(
-    async (pageIndex: number, direction?: string) => {
+    async (newPageIndex: number, direction?: string) => {
       setLoading(true);
       setErrorMessage("");
 
@@ -86,13 +86,16 @@ const GalleryView = () => {
           queryParams.set("cursor", cursorRef.current);
           break;
         case direction === "prev":
-          if (pageIndex === 1) {
+          if (newPageIndex === 1) {
             queryParams.delete("cursor");
           } else {
-            queryParams.set("cursor", ((pageIndex - 1) * PER_PAGE).toString());
+            queryParams.set(
+              "cursor",
+              ((newPageIndex - 1) * PER_PAGE).toString()
+            );
           }
           break;
-        case pageIndex === lastPage:
+        case newPageIndex === lastPage:
           queryParams.set(
             "cursor",
             (TOTAL_ITEMS - (TOTAL_ITEMS % PER_PAGE)).toString()
@@ -109,7 +112,7 @@ const GalleryView = () => {
       const newQueryParams = "?" + queryParams.toString();
       navigate(currentPath + newQueryParams);
 
-      const cacheEntry = cache[pageIndex];
+      const cacheEntry = cache[newPageIndex];
       const isCacheValid =
         cacheEntry && Date.now() - cacheEntry.timestamp < CACHE_EXPIRY;
 
@@ -118,6 +121,7 @@ const GalleryView = () => {
         cursorRef.current = cacheEntry.cursor;
         setPageIndex(cacheEntry.pageIndex);
         setLoading(false);
+        console.log("triggerCache");
       } else {
         // Fetch the NFTs from the API
         try {
@@ -125,34 +129,46 @@ const GalleryView = () => {
           const data = await response.json();
           setNfts(data.page);
           const newCursor = data.cursor;
-          const newPageIndex = Math.floor(Number(newCursor) / PER_PAGE);
           cursorRef.current = newCursor;
           setPageIndex(newPageIndex);
           // Update the cache entry to include cursor and pageIndex
           setCache((prevCache) => ({
             ...prevCache,
-            [pageIndex]: {
+            [newPageIndex]: {
               data: data.page,
               cursor: newCursor,
               pageIndex: newPageIndex,
               timestamp: Date.now(),
             },
           }));
-          /* TO REMOVE!! */
-          /* console.log("triggered"); */
         } catch (err: any) {
           setErrorMessage(err.message ?? "An error occurred");
         } finally {
           setLoading(false);
+          console.log("triggeredAPI");
         }
       }
     },
-    [cursorRef, cache]
+    [cursorRef, cache, PER_PAGE, navigate]
   );
 
   // Initial fetch
   useEffect(() => {
-    fetchNfts(pageIndex);
+    // Check if the query params contain a cursor and thus are page 1 or not (for initial fetch) if not, fetch the NFTs for that page and the right pageIndex
+    const queryParams = new URLSearchParams(location.search);
+    const cursor = queryParams.get("cursor");
+    let newPageIndex;
+
+    if (cursor) {
+      newPageIndex = Math.floor(Number(cursor) / PER_PAGE + 1);
+    } else {
+      newPageIndex = 1;
+    }
+
+    // Restore the previous pageIndex and cursor values
+    setPageIndex(newPageIndex);
+    cursorRef.current = cursor ?? "";
+    fetchNfts(newPageIndex);
   }, []);
 
   // Display an error toast if there is an error message
@@ -182,19 +198,25 @@ const GalleryView = () => {
   return (
     <section className="relative flex flex-wrap justify-center items-center size-full gap-4 2k:gap-8">
       {!loading ? (
-        <div className="grid w-full grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 1k:grid-cols-8 2k:grid-cols-10 gap-4 2k:gap-8">
+        <div className="grid w-full grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 1k:grid-cols-8 2k:grid-cols-10 gap-4 2k:gap-8">
           {/* Mapping through data and render the Detailed Cards */}
-          {nfts.map((slayer: NftListType) => {
+          {nfts.map((slayer: NftListType, index) => {
             const props = {
               slayer,
               className: "cursor-pointer outline-4 hover:outline",
               history: {
                 limit: PER_PAGE.toString(),
-                cursor: cursorRef.current,
+                getCursor: () => cursorRef.current,
               },
+              type: "gallery",
             };
 
-            return <SlayerCardGallery key={slayer.tokenId} {...props} />;
+            return (
+              <SlayerCardComponent
+                key={`${slayer.tokenId}-gallery-${index}`}
+                {...props}
+              />
+            );
           })}
         </div>
       ) : (
@@ -203,22 +225,22 @@ const GalleryView = () => {
         </div>
       )}
 
-      <Pagination className="sticky bottom-8 py-2 px-8 flex w-full max-w-2xl rounded-lg bg-tertiary/85 backdrop-blur-sm">
+      <Pagination className="sticky bottom-0 md:bottom-8 py-2 px-4 flex w-screen md:max-w-2xl md:rounded-lg bg-tertiary-foreground md:bg-tertiary-foreground/85 backdrop-blur-sm select-none left-0 right-0  ml-[-4rem] mr-[-4rem]">
         <PaginationContent>
           <PaginationItem>
             {pageIndex > 1 ? (
               <PaginationPrevious
                 onClick={handlePreviousClick}
-                className="cursor-pointer hover:bg-primary/15 transition-all"
+                className="cursor-pointer h-16 md:h-12 lg:h-10 hover:bg-primary/15 transition-all"
               />
             ) : (
-              <PaginationPrevious className="opacity-20 pointer-events-none transition-all" />
+              <PaginationPrevious className="opacity-20 h-16 md:h-12 lg:h-10 pointer-events-none transition-all" />
             )}
           </PaginationItem>
 
           <PaginationItem>
             <PaginationLink
-              className="cursor-pointer hover:bg-primary/15 transition-all focus-visible:bg-accent/65"
+              className="cursor-pointer h-16 md:h-12 lg:h-10 hover:bg-primary/15 transition-all focus-visible:bg-accent/65"
               onClick={handleFirstPageClick}
               isActive={pageIndex === 1}
             >
@@ -230,17 +252,17 @@ const GalleryView = () => {
             <PaginationItem className="mx-6">
               <PaginationLink
                 isActive
-                className="hover:bg-primary/15 transition-all"
+                className="hover:bg-primary/15 h-16 md:h-12 lg:h-10 transition-all"
               >
                 {pageIndex}
               </PaginationLink>
             </PaginationItem>
           ) : (
-            <PaginationEllipsis className="mx-6" />
+            <PaginationEllipsis className="mx-6 h-16 md:h-12 lg:h-10" />
           )}
           <PaginationItem>
             <PaginationLink
-              className="cursor-pointer hover:bg-primary/15 transition-all"
+              className="cursor-pointer h-16 md:h-12 lg:h-10 hover:bg-primary/15 transition-all"
               onClick={() =>
                 fetchNfts(pageIndex === lastPage ? pageIndex : lastPage)
               }
@@ -253,10 +275,10 @@ const GalleryView = () => {
             {pageIndex < lastPage ? (
               <PaginationNext
                 onClick={handleNextClick}
-                className="cursor-pointer hover:bg-primary/15 transition-all"
+                className="cursor-pointer h-16 md:h-12 lg:h-10 hover:bg-primary/15 transition-all"
               />
             ) : (
-              <PaginationNext className="opacity-20 pointer-events-none transition-all" />
+              <PaginationNext className="opacity-20 pointer-events-none h-16 md:h-12 lg:h-10 transition-all" />
             )}
           </PaginationItem>
         </PaginationContent>

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { SlayerCardDetails } from "@/components/SlayerCards";
+import SlayerCardComponent from "@/components/SlayerCards";
 import SlayerStatsTable from "@/components/SlayerStatsTable";
 import CopyClipboard from "@/components/CopyClipboard";
 import { SlayerCard, SlayerCardContent } from "@/components/ui/slayercard";
@@ -22,8 +22,12 @@ const SlayerDetailsPage = () => {
   const handleClick = () => {
     // Generate the new URL with the newQueryParams
     let queryParams = new URLSearchParams(location.search);
+    // Set the cursor one page back to not jumpt one page further everytime
+    const cursorBack = cursor - limit;
     queryParams.set("limit", limit.toString());
-    queryParams.set("cursor", cursor.toString());
+    queryParams.set("cursor", cursorBack.toString());
+
+    /*  queryParams.set("cursor", cursor.toString()); */
     const newUrl = `/gallery?${queryParams.toString()}`;
 
     // Navigate back to the gallery view with the new URL
@@ -33,6 +37,7 @@ const SlayerDetailsPage = () => {
   return (
     <section className="flex flex-col w-full justify-center items-center">
       <div className="pb-12">
+        {/* BACK BUTTON */}
         <a
           className="text-2xl hover:text-tertiary-foreground transition-all"
           href="#"
@@ -46,7 +51,11 @@ const SlayerDetailsPage = () => {
       </div>
       <div className="w-full grid grid-cols-1 divide-y lg:grid-cols-2 lg:divide-x lg:divide-y-0">
         <div className="basis-1 lg:basis-1/2 flex justify-center py-8 lg:py-0 lg:px-8">
-          <SlayerCardDetails slayer={slayer} className="h-fit" />
+          <SlayerCardComponent
+            key={`${slayer.tokenId}-details`}
+            slayer={slayer}
+            className="h-fit"
+          />
         </div>
         <div className="basis-1 lg:basis-1/2 flex flex-col py-8 lg:py-0 lg:px-8 items-center gap-4">
           <SlayerCard className="w-full max-w-lg">
