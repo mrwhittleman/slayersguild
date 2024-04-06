@@ -63,17 +63,17 @@ export default function Navigation() {
                   {/* Hamburger Button */}
                   <div className="flex flex-col gap-2">
                     <span
-                      className={`block w-10 h-0.5 rounded-full bg-tertiary-foreground transform transition-transform duration-500 ${
+                      className={`block w-8 h-0.5 rounded-full bg-tertiary-foreground transform transition-transform duration-500 ${
                         isOpen ? "rotate-45 translate-y-2" : ""
                       }`}
                     ></span>
                     <span
-                      className={`block w-10 h-0.5 rounded-full bg-tertiary-foreground transition-transform duration-300 ${
+                      className={`block w-8 h-0.5 rounded-full bg-tertiary-foreground transition-transform duration-300 ${
                         isOpen ? "opacity-0" : ""
                       }`}
                     ></span>
                     <span
-                      className={`block w-10 h-0.5 rounded-full bg-tertiary-foreground transition-transform duration-500 ${
+                      className={`block w-8 h-0.5 rounded-full bg-tertiary-foreground transition-transform duration-500 ${
                         isOpen ? "-rotate-45 -translate-y-1" : ""
                       }`}
                     ></span>
