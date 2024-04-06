@@ -226,21 +226,21 @@ const GalleryView = () => {
       )}
 
       <Pagination className="sticky bottom-0 md:bottom-8 py-2 px-4 flex w-screen md:max-w-2xl md:rounded-lg bg-tertiary-foreground md:bg-tertiary-foreground/85 backdrop-blur-sm select-none left-0 right-0  ml-[-4rem] mr-[-4rem]">
-        <PaginationContent>
-          <PaginationItem>
+        <PaginationContent className="flex w-full">
+          <PaginationItem className="mr-auto">
             {pageIndex > 1 ? (
               <PaginationPrevious
                 onClick={handlePreviousClick}
-                className="cursor-pointer h-16 md:h-12 lg:h-10 hover:bg-primary/15 transition-all"
+                className="cursor-pointer h-12 w-12 lg:h-10 hover:bg-primary/15 transition-all"
               />
             ) : (
-              <PaginationPrevious className="opacity-20 h-16 md:h-12 lg:h-10 pointer-events-none transition-all" />
+              <PaginationPrevious className="opacity-20 h-12 w-12 lg:h-10 pointer-events-none transition-all" />
             )}
           </PaginationItem>
 
           <PaginationItem>
             <PaginationLink
-              className="cursor-pointer h-16 md:h-12 lg:h-10 hover:bg-primary/15 transition-all focus-visible:bg-accent/65"
+              className="cursor-pointer h-12 lg:h-10 hover:bg-primary/15 transition-all focus-visible:bg-accent/65"
               onClick={handleFirstPageClick}
               isActive={pageIndex === 1}
             >
@@ -252,17 +252,17 @@ const GalleryView = () => {
             <PaginationItem className="mx-6">
               <PaginationLink
                 isActive
-                className="hover:bg-primary/15 h-16 md:h-12 lg:h-10 transition-all"
+                className="hover:bg-primary/15 h-12 lg:h-10 transition-all"
               >
                 {pageIndex}
               </PaginationLink>
             </PaginationItem>
           ) : (
-            <PaginationEllipsis className="mx-6 h-16 md:h-12 lg:h-10" />
+            <PaginationEllipsis className="mx-6 h-12 lg:h-10" />
           )}
           <PaginationItem>
             <PaginationLink
-              className="cursor-pointer h-16 md:h-12 lg:h-10 hover:bg-primary/15 transition-all"
+              className="cursor-pointer h-12 lg:h-10 hover:bg-primary/15 transition-all"
               onClick={() =>
                 fetchNfts(pageIndex === lastPage ? pageIndex : lastPage)
               }
@@ -271,14 +271,14 @@ const GalleryView = () => {
               {lastPage}
             </PaginationLink>
           </PaginationItem>
-          <PaginationItem>
+          <PaginationItem className="ml-auto">
             {pageIndex < lastPage ? (
               <PaginationNext
                 onClick={handleNextClick}
-                className="cursor-pointer h-16 md:h-12 lg:h-10 hover:bg-primary/15 transition-all"
+                className="cursor-pointer h-12 w-12 lg:h-10 hover:bg-primary/15 transition-all"
               />
             ) : (
-              <PaginationNext className="opacity-20 pointer-events-none h-16 md:h-12 lg:h-10 transition-all" />
+              <PaginationNext className="opacity-20 pointer-events-none h-12 w-12 lg:h-10 transition-all" />
             )}
           </PaginationItem>
         </PaginationContent>
