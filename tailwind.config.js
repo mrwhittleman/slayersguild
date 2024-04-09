@@ -87,10 +87,21 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "slide-in": {
+          "0%": {
+            transform: "translateX(0)",
+            rotate: "0",
+          },
+          "100%": {
+            transform: "translateX(var(--translate-distance))",
+            rotate: "var(--rotate-distance)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "cards-slide": "slide-in 1s ease-out forwards",
       },
       fontFamily: {
         logo: ["Skranji", "system-ui"],
@@ -101,7 +112,19 @@ module.exports = {
         "9xl": "1920px",
         "10xl": "2560px",
       },
+      containers: {
+        360: "360px",
+        400: "400px",
+        640: "640px",
+        768: "768px",
+        1024: "1024px",
+        1920: "1920px",
+        2560: "2560px",
+      },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/container-queries"),
+  ],
 };

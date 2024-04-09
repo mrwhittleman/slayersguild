@@ -1,13 +1,21 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import SlayerCardComponent from "@/components/SlayerCards";
+import SlayerCardComponent from "@/components/SlayerCardComponent";
 import SlayerStatsTable from "@/components/SlayerStatsTable";
 import CopyClipboard from "@/components/CopyClipboard";
 import { SlayerCard, SlayerCardContent } from "@/components/ui/slayercard";
+import { useWallet } from "@vechain/dapp-kit-react";
+import { useWalletName } from "@/hooks/useWalletName";
+import { Grid, GridContent, GridGallery } from "@/components/ui/grid";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const SlayerDetailsPage = () => {
+  const wallet = useWallet();
   const location = useLocation();
   const navigate = useNavigate();
-  const { slayer, slayerMetadata, limit, cursor } = location.state;
+  const { slayer, slayerMetadata } = location.state;
+
+  const { name } = useWalletName(slayer.owner);
 
   const truncateMiddle = (text: string, maxLength = 20) => {
     if (text.length <= maxLength) {
@@ -20,23 +28,12 @@ const SlayerDetailsPage = () => {
 
   // In the SlayerDetailsPage component
   const handleClick = () => {
-    // Generate the new URL with the newQueryParams
-    let queryParams = new URLSearchParams(location.search);
-    // Set the cursor one page back to not jumpt one page further everytime
-    const cursorBack = cursor - limit;
-    queryParams.set("limit", limit.toString());
-    queryParams.set("cursor", cursorBack.toString());
-
-    /*  queryParams.set("cursor", cursor.toString()); */
-    const newUrl = `/gallery?${queryParams.toString()}`;
-
-    // Navigate back to the gallery view with the new URL
-    navigate(newUrl);
+    navigate(-1);
   };
 
   return (
-    <section className="flex flex-col w-full justify-center items-center">
-      <div className="pb-12">
+    <section className="flex flex-col w-full gap-4">
+      <div className="self-center">
         {/* BACK BUTTON */}
         <a
           className="text-2xl hover:text-tertiary-foreground transition-all"
@@ -46,38 +43,48 @@ const SlayerDetailsPage = () => {
             handleClick();
           }}
         >
+          <FontAwesomeIcon icon={faArrowLeft} size="xs" className="mr-2" />
           Back
         </a>
       </div>
-      <div className="w-full grid grid-cols-1 divide-y lg:grid-cols-2 lg:divide-x lg:divide-y-0">
-        <div className="basis-1 lg:basis-1/2 flex justify-center py-8 lg:py-0 lg:px-8">
+      <Grid className="grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-0 lg:divide-x">
+        <GridContent className="pr-0 lg:pr-8">
           <SlayerCardComponent
             key={`${slayer.tokenId}-details`}
             slayer={slayer}
-            className="h-fit"
           />
-        </div>
-        <div className="basis-1 lg:basis-1/2 flex flex-col py-8 lg:py-0 lg:px-8 items-center gap-4">
-          <SlayerCard className="w-full max-w-lg">
+        </GridContent>
+        <GridContent className="flex-col gap-4 items-center justify-start pl-0 lg:pl-8">
+          <SlayerCard>
             <SlayerCardContent>
               <h3 className="text-4xl">Owner:</h3>
               <div className="flex justify-between">
                 <p className="text-base md:text-xl lg:text-base xl:text-lg text-tertiary-foreground">
-                  {truncateMiddle(slayer?.owner)}
+                  {slayer.owner === wallet.account
+                    ? `You: ${
+                        name
+                          ? name.length <= 8
+                            ? name.replace(".vet", " .vet")
+                            : name
+                          : wallet.account
+                      }`
+                    : name
+                    ? name.length <= 8
+                      ? name.replace(".vet", " .vet")
+                      : name
+                    : truncateMiddle(slayer.owner)}
                 </p>
                 <CopyClipboard copyData={slayer.owner} />
               </div>
             </SlayerCardContent>
           </SlayerCard>
-          <div className="w-full max-w-lg">
-            <SlayerCard>
-              <SlayerCardContent>
-                <SlayerStatsTable attributes={slayerMetadata.attributes} />
-              </SlayerCardContent>
-            </SlayerCard>
-          </div>
-        </div>
-      </div>
+          <SlayerCard>
+            <SlayerCardContent>
+              <SlayerStatsTable attributes={slayerMetadata.attributes} />
+            </SlayerCardContent>
+          </SlayerCard>
+        </GridContent>
+      </Grid>
     </section>
   );
 };

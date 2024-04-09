@@ -1,9 +1,9 @@
-import OfferingPage from "./pages/Offering";
+import LandingPage from "./pages/Landing";
 
 export default function App() {
   return (
-    <section className="flex flex-col w-full gap-4">
-      <OfferingPage />
+    <section className="flex flex-col w-full h-full justify-center items-center gap-4">
+      <LandingPage />
     </section>
   );
 }

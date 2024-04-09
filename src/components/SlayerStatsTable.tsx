@@ -25,7 +25,7 @@ const randomRarity = () => {
 
 const SlayerStatsTable = ({ attributes }: { attributes: any }) => {
   return (
-    <Table className="max-w-lg rounded-lg overflow-hidden text-base">
+    <Table className="w-full rounded-lg overflow-hidden text-base">
       <TableBody>
         {attributes.map((attribute: any) => (
           <TableRow key={attribute.trait_type}>

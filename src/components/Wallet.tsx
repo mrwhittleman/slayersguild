@@ -3,8 +3,6 @@ import { useWallet } from "@vechain/dapp-kit-react";
 import { WalletButton } from "@vechain/dapp-kit-react";
 import { useWalletName } from "@/hooks/useWalletName";
 import { Button } from "@/components/ui/button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 export default function Wallet({
   children,

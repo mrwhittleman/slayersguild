@@ -8,42 +8,42 @@
 @layer base {
   /* TODO light theme to new color palette */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 20 14.3% 4.1%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 20 14.3% 4.1%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-    --slayercard: 217.2 12.6% 85%;
+    --slayercard: 217.2 32.6% 17.5%;
     --slayercard-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 14.3% 4.1%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 222.2 84% 4.9%;
-    --primary-foreground: 60 9.1% 97.8%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 60 4.8% 95.9%;
-    --secondary-foreground: 24 9.8% 10%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    --tertiary: 20.2 74.8% 68.8%;
-    --tertiary-foreground: 20.2 74.8% 68.8%;
+    --tertiary: 20.2 74.8% 58.8%;
+    --tertiary-foreground: 20.2 74.8% 58.8%;
 
-    --muted: 60 4.8% 95.9%;
-    --muted-foreground: 25 5.3% 44.7%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 12.6% 85%;
-    --accent-foreground: 24 9.8% 10%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 60 9.1% 97.8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
     --success: 120 35% 40%;
     --success-foreground: 75 9.1% 97.8%;
 
-    --border: 217.2 12.6% 85%;
-    --input: 217.2 12.6% 85%;
-    --ring: 217.2 12.6% 85%;
+    --border: 217.2 12% 25.5%;
+    --input: 20.2 74.8% 58.8%;
+    --ring: 20.2 74.8% 58.8%;
 
     --radius: 0.5rem;
   }

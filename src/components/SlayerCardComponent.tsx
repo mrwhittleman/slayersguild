@@ -24,6 +24,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import ImageViewer from "./ImageViewer";
+import { useSlayerImage } from "@/hooks/useSlayerImages";
 
 // Base URL for the metadata of each slayer TO BE PUT IN .ENV FILE!!!
 const METADATA_URL =
@@ -43,7 +44,7 @@ const slayerStatsHud = (slayerMetadata: NftMetadataType) => {
       ...Array(skill)
         .fill(0)
         .map((_, idx) => (
-          <FontAwesomeIcon key={`full${idx}`} icon={faFullCircle} size="xs" />
+          <FontAwesomeIcon key={`full${idx}`} icon={faFullCircle} size="2xs" />
         )),
       ...Array(5 - skill)
         .fill(0)
@@ -51,7 +52,7 @@ const slayerStatsHud = (slayerMetadata: NftMetadataType) => {
           <FontAwesomeIcon
             key={`empty${idx}`}
             icon={faCircle as IconProp}
-            size="xs"
+            size="2xs"
           />
         )),
     ];
@@ -110,63 +111,58 @@ const slayerStatsHud = (slayerMetadata: NftMetadataType) => {
 const handleClick = (
   navigate: Function,
   slayer: NftListType,
-  slayerMetadata: NftMetadataType,
-  getCursor: Function,
-  limit: string
+  slayerMetadata?: NftMetadataType
 ) => {
-  const cursor = getCursor();
   navigate(`/slayer-details/${slayer.tokenId}`, {
-    state: { slayer, slayerMetadata, limit, cursor },
+    state: { slayer, slayerMetadata },
   });
 };
 
 export default function SlayerCardComponent({
   slayer,
   className,
-  history,
   type,
 }: {
   slayer: NftListType;
   className?: string;
-  history?: { limit: string; getCursor: Function };
-  type?: string;
+  type?: "link" | "dummy" | null;
 }) {
   // Set the cursor, limit, and navigate function only for the gallery view
-  let limit: string;
   let navigate: Function;
-  let getCursor: Function;
-  if (type === "gallery" && history) {
-    limit = history.limit;
-    getCursor = history.getCursor;
+  if (type === "link") {
     navigate = useNavigate();
   }
 
-  const { metadata: slayerMetadata, loading } = useMetadata(
+  const { metadata: slayerMetadata, metadataLoading } = useMetadata(
     Number(slayer.tokenId)
   );
+
+  const { slayerImage: slayerImage, imageLoading } = useSlayerImage(
+    Number(slayer.tokenId)
+  );
+
   return (
     <SlayerCard
       // Handle the click event for the card only if the parent component has the link prop
-      className={cn("max-w-xl", className)}
+      className={cn("w-full max-w-xl h-fit", className)}
       onClick={
-        type === "gallery"
+        type === "link"
           ? () =>
-              slayerMetadata &&
-              handleClick(navigate, slayer, slayerMetadata, getCursor, limit)
+              slayerMetadata && handleClick(navigate, slayer, slayerMetadata)
           : undefined
       }
     >
       <SlayerCardImage>
-        {!loading && METADATA_URL && slayerMetadata ? (
+        {!imageLoading && METADATA_URL && slayerImage && slayerMetadata ? (
           <>
-            <div className="relative flex">
+            <div className="relative flex w-full">
               <img
-                src={METADATA_URL + slayerMetadata.tokenId + ".jpg"}
+                src={slayerImage}
                 alt={slayerMetadata.name}
                 width={640}
-                className="flex w-[640px] max-h-sm"
+                height={640}
               />
-              {type !== "gallery" && (
+              {type !== "link" && type !== "dummy" && (
                 <>
                   <ImageViewer
                     imageUrl={METADATA_URL + slayerMetadata.tokenId + ".jpg"}
@@ -175,7 +171,7 @@ export default function SlayerCardComponent({
                     <FontAwesomeIcon
                       icon={faMagnifyingGlass}
                       size="xl"
-                      className="absolute bottom-4 right-4 bg-tertiary/25 rounded-lg p-2 hover:bg-tertiary/45 hover:scale-110 transition-all"
+                      className="absolute bottom-4 right-4 bg-tertiary/45 rounded-lg p-2 hover:bg-tertiary/65 hover:scale-110 transition-all"
                     />
                   </ImageViewer>
                 </>
@@ -183,13 +179,13 @@ export default function SlayerCardComponent({
             </div>
           </>
         ) : (
-          <div className="flex w-full h-[260px] justify-center items-center bg-white/15">
+          <div className="flex w-[640] h-[260px] justify-center items-center bg-white/15">
             <Spinner />
           </div>
         )}
       </SlayerCardImage>
       {/* Name and Rank */}
-      {!loading ? (
+      {!metadataLoading ? (
         <SlayerCardContent className="border-b">
           <h2 className="text-lg font-normal">{slayerMetadata?.name}</h2>
           <p className="text-muted-foreground text-xs">
@@ -202,7 +198,7 @@ export default function SlayerCardComponent({
         </div>
       )}
       {/* Handle the Stats HUD for each skill bar and elemental class */}
-      {!loading ? (
+      {!metadataLoading ? (
         <SlayerCardHud className="flex items-center justify-between">
           {slayerMetadata && slayerStatsHud(slayerMetadata)}
         </SlayerCardHud>
@@ -213,26 +209,4 @@ export default function SlayerCardComponent({
       )}
     </SlayerCard>
   );
-}
-
-{
-  /* 
-          <img
-            src={METADATA_URL + slayerMetadata.tokenId + ".jpg"}
-            alt={slayerMetadata.name}
-            width={500}
-            className="flex w-[500px] max-h-sm"
-          />
-          
-          <div className="flex w-[500px] h-[500px] justify-center items-center bg-white/15">
-            <Spinner />
-          </div>
-
-        <div className="flex w-[500px] h-[65px] justify-center items-center">
-          <Spinner />
-        </div>
-
-        <div className="flex w-full h-[80px] justify-center items-center">
-          <Spinner />
-        </div> */
 }
