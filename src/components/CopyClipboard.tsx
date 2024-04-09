@@ -11,7 +11,7 @@ const CopyClipboard = ({ copyData }: { copyData: string }) => {
       await navigator.clipboard.writeText(copyData);
       toast({
         title: "Success",
-        description: "Transaction ID copied to clipboard.",
+        description: "ID copied to clipboard.",
         variant: "success",
       });
     } catch (err) {
