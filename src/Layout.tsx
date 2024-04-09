@@ -7,6 +7,7 @@ import Navigation from "./components/Navigation";
 import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer";
 import { Toaster } from "./components/ui/toaster";
+import Socialmedia from "./components/Socialmedia";
 
 const walletConnectOptions: WalletConnectOptions = {
   projectId: WALLET_CONNECT_PROJECT_ID,
@@ -23,7 +24,7 @@ export default function Layout() {
     <>
       <ThemeProvider
         attribute="class"
-        defaultTheme="system"
+        defaultTheme="dark"
         enableSystem
         disableTransitionOnChange
       >
@@ -31,10 +32,11 @@ export default function Layout() {
           <main className="flex justify-center">
             <div className="flex flex-col items-center w-full max-w-10xl min-h-screen">
               <Navigation />
-              <div className="flex w-full px-4 2xl:px-12 4k:px-0 py-12">
+              <Socialmedia />
+              <div className="flex w-full h-full px-4 lg:px-12 4k:px-0 py-12">
                 <Outlet />
               </div>
-              {/* <Footer /> */}
+              <Footer />
             </div>
           </main>
           <Toaster />
