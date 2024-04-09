@@ -16,9 +16,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import SlayerCardComponent from "./SlayerCards";
+import SlayerCardComponent from "./SlayerCardComponent";
 import { NftListType } from "@/types/types";
 import Spinner from "./Spinner";
+import { Grid, GridContent, GridGallery } from "./ui/grid";
 
 interface CacheEntry {
   data: NftListType[];
@@ -44,8 +45,10 @@ const GalleryView = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   // API URL for fetching NFTs
-  /*   const apiUrl = "https://2d6aa0e1.slayersguild.pages.dev/api/nfts"; */
-  const apiUrl = "https://slayersguild-b60.pages.dev/api/nfts";
+  //check if env variable is available othewise use https://slayersguild-b60.pages.dev/api/nfts
+  const apiUrl =
+    process.env.REACT_APP_NFT_LIST_API ||
+    "https://slayersguild-b60.pages.dev/api/nfts";
 
   // Number of items to display depeding on device width
   const PER_PAGE = useMemo(() => {
@@ -53,14 +56,12 @@ const GalleryView = () => {
       return 8;
     } else if (window.innerWidth < 640) {
       return 12;
-    } else if (window.innerWidth < 768) {
+    } else if (window.innerWidth <= 768) {
       return 15;
-    } else if (window.innerWidth < 1920) {
+    } else if (window.innerWidth <= 1920) {
       return 24;
-    } else if (window.innerWidth < 2560) {
-      return 32;
     } else {
-      return 60;
+      return 40;
     }
   }, [window.innerWidth]);
 
@@ -196,94 +197,92 @@ const GalleryView = () => {
   }, [fetchNfts]);
 
   return (
-    <section className="relative flex flex-wrap justify-center items-center size-full gap-4 2k:gap-8">
+    <>
       {!loading ? (
-        <div className="grid w-full grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 1k:grid-cols-8 2k:grid-cols-10 gap-4 2k:gap-8">
-          {/* Mapping through data and render the Detailed Cards */}
-          {nfts.map((slayer: NftListType, index) => {
-            const props = {
-              slayer,
-              className: "cursor-pointer outline-4 hover:outline",
-              history: {
-                limit: PER_PAGE.toString(),
-                getCursor: () => cursorRef.current,
-              },
-              type: "gallery",
-            };
+        <section className="relative flex flex-wrap justify-center items-center gap-4 2k:gap-8">
+          <Grid>
+            <GridContent>
+              <GridGallery>
+                {/* Mapping through data and render the Detailed Cards */}
+                {nfts.map((slayer: NftListType, index) => {
+                  return (
+                    <SlayerCardComponent
+                      key={`${slayer.tokenId}-gallery-${index}`}
+                      slayer={slayer}
+                      className="cursor-pointer outline-4 hover:outline"
+                      type="link"
+                    />
+                  );
+                })}
+              </GridGallery>
+            </GridContent>
+          </Grid>
 
-            return (
-              <SlayerCardComponent
-                key={`${slayer.tokenId}-gallery-${index}`}
-                {...props}
-              />
-            );
-          })}
-        </div>
+          <Pagination className="sticky bottom-0 md:bottom-8 py-2 px-4 flex w-screen md:max-w-2xl md:rounded-lg bg-tertiary-foreground md:bg-tertiary-foreground/85 backdrop-blur-sm select-none left-0 right-0 ml-[-4rem] mr-[-4rem]">
+            <PaginationContent className="flex w-full">
+              <PaginationItem className="mr-auto">
+                {pageIndex > 1 ? (
+                  <PaginationPrevious
+                    onClick={handlePreviousClick}
+                    className="cursor-pointer h-12 w-fit min-w-12 lg:h-10 hover:bg-primary/15 transition-all"
+                  />
+                ) : (
+                  <PaginationPrevious className="opacity-20 h-12 w-fit min-w-12 lg:h-10 pointer-events-none transition-all" />
+                )}
+              </PaginationItem>
+
+              <PaginationItem>
+                <PaginationLink
+                  className="cursor-pointer h-12 lg:h-10 hover:bg-primary/15 transition-all focus-visible:bg-accent/65"
+                  onClick={handleFirstPageClick}
+                  isActive={pageIndex === 1}
+                >
+                  {1}
+                </PaginationLink>
+              </PaginationItem>
+
+              {pageIndex > 1 && pageIndex < lastPage ? (
+                <PaginationItem className="mx-6">
+                  <PaginationLink
+                    isActive
+                    className="hover:bg-primary/15 h-12 lg:h-10 transition-all"
+                  >
+                    {pageIndex}
+                  </PaginationLink>
+                </PaginationItem>
+              ) : (
+                <PaginationEllipsis className="mx-6 h-12 lg:h-10" />
+              )}
+              <PaginationItem>
+                <PaginationLink
+                  className="cursor-pointer h-12 lg:h-10 hover:bg-primary/15 transition-all"
+                  onClick={() =>
+                    fetchNfts(pageIndex === lastPage ? pageIndex : lastPage)
+                  }
+                  isActive={pageIndex === lastPage}
+                >
+                  {lastPage}
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem className="ml-auto">
+                {pageIndex < lastPage ? (
+                  <PaginationNext
+                    onClick={handleNextClick}
+                    className="cursor-pointer h-12 w-fit min-w-12 lg:h-10 hover:bg-primary/15 transition-all"
+                  />
+                ) : (
+                  <PaginationNext className="opacity-20 pointer-events-none h-12 w-fit min-w-12 lg:h-10 transition-all" />
+                )}
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </section>
       ) : (
         <div className="flex w-full h-full justify-center items-center">
           <Spinner />
         </div>
       )}
-
-      <Pagination className="sticky bottom-0 md:bottom-8 py-2 px-4 flex w-screen md:max-w-2xl md:rounded-lg bg-tertiary-foreground md:bg-tertiary-foreground/85 backdrop-blur-sm select-none left-0 right-0  ml-[-4rem] mr-[-4rem]">
-        <PaginationContent className="flex w-full">
-          <PaginationItem className="mr-auto">
-            {pageIndex > 1 ? (
-              <PaginationPrevious
-                onClick={handlePreviousClick}
-                className="cursor-pointer h-12 w-12 lg:h-10 hover:bg-primary/15 transition-all"
-              />
-            ) : (
-              <PaginationPrevious className="opacity-20 h-12 w-12 lg:h-10 pointer-events-none transition-all" />
-            )}
-          </PaginationItem>
-
-          <PaginationItem>
-            <PaginationLink
-              className="cursor-pointer h-12 lg:h-10 hover:bg-primary/15 transition-all focus-visible:bg-accent/65"
-              onClick={handleFirstPageClick}
-              isActive={pageIndex === 1}
-            >
-              {1}
-            </PaginationLink>
-          </PaginationItem>
-
-          {pageIndex > 1 && pageIndex < lastPage ? (
-            <PaginationItem className="mx-6">
-              <PaginationLink
-                isActive
-                className="hover:bg-primary/15 h-12 lg:h-10 transition-all"
-              >
-                {pageIndex}
-              </PaginationLink>
-            </PaginationItem>
-          ) : (
-            <PaginationEllipsis className="mx-6 h-12 lg:h-10" />
-          )}
-          <PaginationItem>
-            <PaginationLink
-              className="cursor-pointer h-12 lg:h-10 hover:bg-primary/15 transition-all"
-              onClick={() =>
-                fetchNfts(pageIndex === lastPage ? pageIndex : lastPage)
-              }
-              isActive={pageIndex === lastPage}
-            >
-              {lastPage}
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem className="ml-auto">
-            {pageIndex < lastPage ? (
-              <PaginationNext
-                onClick={handleNextClick}
-                className="cursor-pointer h-12 w-12 lg:h-10 hover:bg-primary/15 transition-all"
-              />
-            ) : (
-              <PaginationNext className="opacity-20 pointer-events-none h-12 w-12 lg:h-10 transition-all" />
-            )}
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
-    </section>
+    </>
   );
 };
 
