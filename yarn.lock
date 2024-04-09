@@ -254,6 +254,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fortawesome/free-brands-svg-icons@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "@fortawesome/free-brands-svg-icons@npm:6.5.2"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.5.2
+  checksum: f037c15978da40942e7962f3ddbddf767bc1a5a126952422c786408e4942f7da4daaefe028ba039b56761636903a5916b845547755a8e04e079c6f92e724fd37
+  languageName: node
+  linkType: hard
+
 "@fortawesome/free-regular-svg-icons@npm:^6.5.2":
   version: 6.5.2
   resolution: "@fortawesome/free-regular-svg-icons@npm:6.5.2"
@@ -2651,6 +2660,15 @@ __metadata:
   version: 0.1.5
   resolution: "@swc/types@npm:0.1.5"
   checksum: 6aee11f62d3d805a64848e0bd5f0e0e615f958e327a9e1260056c368d7d28764d89e38bd8005a536c9bf18afbcd303edd84099d60df34a2975d62540f61df13b
+  languageName: node
+  linkType: hard
+
+"@tailwindcss/container-queries@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@tailwindcss/container-queries@npm:0.1.1"
+  peerDependencies:
+    tailwindcss: ">=3.2.0"
+  checksum: 2515ae0ce3ca5f3eb2a54116e97cbf4bce45d5fc7ad4b01f3204f51937461ff099c878048afbca22ca422ea3a9c1779df68a7cfe320ca155da47a8dde3257f4b
   languageName: node
   linkType: hard
 
@@ -9056,6 +9074,7 @@ __metadata:
     "@adraffy/ens-normalize": ^1.10.1
     "@ensdomains/ensjs": ^3.4.4
     "@fortawesome/fontawesome-svg-core": ^6.5.1
+    "@fortawesome/free-brands-svg-icons": ^6.5.2
     "@fortawesome/free-regular-svg-icons": ^6.5.2
     "@fortawesome/free-solid-svg-icons": ^6.5.1
     "@fortawesome/react-fontawesome": ^0.2.0
@@ -9069,6 +9088,7 @@ __metadata:
     "@radix-ui/react-select": ^2.0.0
     "@radix-ui/react-slot": ^1.0.2
     "@radix-ui/react-toast": ^1.1.5
+    "@tailwindcss/container-queries": ^0.1.1
     "@types/react": ^18.2.64
     "@types/react-dom": ^18.2.21
     "@types/react-helmet": ^6.1.11
