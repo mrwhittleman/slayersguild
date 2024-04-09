@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import Wallet from "@/components/Wallet";
 import Logo from "@/assets/VSG-LOGO_1.png";
 import {
@@ -12,7 +13,6 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 type Link = {
   name: string;
@@ -34,7 +34,7 @@ export default function Navigation() {
 
   return (
     <>
-      <nav className="relative flex flex-col w-full px-4 lg:px-12 py-4 bg-accent border-b border-tertiary">
+      <nav className="relative flex flex-col w-full px-4 lg:px-12 py-4 bg-accent border-b border-tertiary z-50">
         <div className="flex">
           {/* LOGO */}
           <div className="flex basis-2/5 lg:basis-1/2 shrink">
@@ -126,13 +126,18 @@ export default function Navigation() {
           <ul className="gap-8 flex">
             {links.map((link) => (
               <li key={link.name}>
-                <Link
+                <NavLink
                   {...link.options}
                   to={link.path}
-                  className="relative text-md font-normal w-fit block after:block after:content-[''] after:absolute after:translate-y-1 after:h-[5px] after:bg-tertiary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
+                  className={({ isActive }) =>
+                    [
+                      "relative text-md font-normal w-fit block after:block after:content-[''] after:absolute after:translate-y-1 after:h-[5px] after:bg-tertiary after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center",
+                      isActive ? "after:scale-x-100" : "",
+                    ].join(" ")
+                  }
                 >
                   {link.icon ? <>{link.icon}</> : <>{link.name}</>}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>
