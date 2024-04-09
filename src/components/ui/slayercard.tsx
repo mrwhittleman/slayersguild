@@ -8,7 +8,7 @@ const SlayerCard = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "overflow-hidden rounded-lg border bg-slayercard text-card-foreground shadow",
+      "overflow-hidden rounded-lg border bg-slayercard text-card-foreground shadow w-full max-w-xl",
       className
     )}
     {...props}
