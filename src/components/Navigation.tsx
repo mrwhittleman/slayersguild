@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,6 +32,10 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useIsMobile();
 
+  const toggleIsOpen = useCallback(() => {
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  }, []);
+
   return (
     <>
       <nav className="relative flex flex-col w-full px-4 lg:px-12 py-4 bg-accent border-b border-tertiary z-50">
@@ -56,24 +60,22 @@ export default function Navigation() {
           {/* MOBILE NAVIGATION */}
           {isMobile && (
             <div className="flex basis-1/5 items-center justify-center">
-              <Sheet
-                onOpenChange={() => setIsOpen((prevIsOpen) => !prevIsOpen)}
-              >
+              <Sheet onOpenChange={toggleIsOpen}>
                 <SheetTrigger>
                   {/* Hamburger Button */}
                   <div className="flex flex-col gap-2">
                     <span
-                      className={`block w-8 h-0.5 rounded-full bg-tertiary-foreground transform transition-transform duration-500 ${
+                      className={`block w-8 h-0.5 rounded-full bg-tertiary transform transition-transform duration-500 ${
                         isOpen ? "rotate-45 translate-y-2" : ""
                       }`}
                     ></span>
                     <span
-                      className={`block w-8 h-0.5 rounded-full bg-tertiary-foreground transition-transform duration-300 ${
+                      className={`block w-8 h-0.5 rounded-full bg-tertiary transition-transform duration-300 ${
                         isOpen ? "opacity-0" : ""
                       }`}
                     ></span>
                     <span
-                      className={`block w-8 h-0.5 rounded-full bg-tertiary-foreground transition-transform duration-500 ${
+                      className={`block w-8 h-0.5 rounded-full bg-tertiary transition-transform duration-500 ${
                         isOpen ? "-rotate-45 -translate-y-1" : ""
                       }`}
                     ></span>
@@ -83,14 +85,16 @@ export default function Navigation() {
                   <SheetHeader className="h-1/6 items-center justify-center">
                     <SheetTitle>
                       {/* MOBILE LOGO */}
-                      <Link to={"/"}>
-                        <img
-                          src={Logo}
-                          alt="Slayers Guild Logo"
-                          height={64}
-                          className="h-16"
-                        />
-                      </Link>
+                      <SheetClose asChild>
+                        <Link to={"/"}>
+                          <img
+                            src={Logo}
+                            alt="Slayers Guild Logo"
+                            height={64}
+                            className="h-16"
+                          />
+                        </Link>
+                      </SheetClose>
                     </SheetTitle>
                   </SheetHeader>
                   {/* MOBILE NAVIGATION LINKS */}
