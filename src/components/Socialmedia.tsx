@@ -1,9 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTelegram, faXTwitter } from "@fortawesome/free-brands-svg-icons";
+import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faBook } from "@fortawesome/free-solid-svg-icons";
+import { faBook, faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
 const Socialmedia = () => {
   return (
@@ -15,8 +14,15 @@ const Socialmedia = () => {
       >
         <FontAwesomeIcon icon={faXTwitter as IconProp} className="text-2xl" />
       </a>
-      <a href="/" target="_blank" rel="noopener noreferrer">
-        <FontAwesomeIcon icon={faTelegram as IconProp} className="text-2xl" />
+      <a
+        href="https://worldofv.art/collection/Slayers"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <FontAwesomeIcon
+          icon={faCartShopping as IconProp}
+          className="text-2xl"
+        />
       </a>
       <a
         href="https://docs.slayersguild.io/"
