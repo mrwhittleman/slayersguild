@@ -3,18 +3,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { useToast } from "@/components/ui/use-toast";
 
-const CopyClipboard = ({ copyData }: { copyData: string }) => {
+interface CopyClipboardProps {
+  copyData: string | undefined;
+  children: React.ReactNode;
+}
+
+const CopyClipboard: React.FC<CopyClipboardProps> = ({
+  copyData,
+  children,
+}) => {
   const { toast } = useToast();
 
+  if (!copyData) {
+    return null;
+  }
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(copyData);
       toast({
         title: "Success",
-        description: "ID copied to clipboard.",
+        description: "Copied to clipboard.",
         variant: "success",
       });
-    } catch (err) {
+    } catch (err: any) {
       toast({
         title: "Error",
         description: "Something went wrong.",
@@ -23,7 +34,12 @@ const CopyClipboard = ({ copyData }: { copyData: string }) => {
     }
   };
   return (
-    <button onClick={handleCopy} aria-label="Copy to clipboard">
+    <button
+      onClick={handleCopy}
+      className="flex w-full gap-8 items-center justify-between"
+      aria-label="Copy to clipboard"
+    >
+      {children}
       <FontAwesomeIcon icon={faCopy} />
     </button>
   );
