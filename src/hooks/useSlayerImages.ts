@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-
-const METADATA_URL =
-  "https://4wz7nuijhm67qgxnqw54egbv52zocgq3qei3gbb7la5vuvowh47q.arweave.net/5bP20Qk7Pfga7YW7whg17rLhGhuBEbMEP1g7WlXWPz8/";
+import { SLAYER_IMAGE_URL } from "@/config";
 
 export const useSlayerImage = (tokenId: number) => {
   const [slayerImage, setSlayerImage] = useState<string>();
@@ -11,7 +9,7 @@ export const useSlayerImage = (tokenId: number) => {
     setImageLoading(true);
     const fetchImage = async () => {
       try {
-        const response = await fetch(`${METADATA_URL}${tokenId}.jpg`);
+        const response = await fetch(`${SLAYER_IMAGE_URL}${tokenId}.jpg`);
 
         if (!response.ok) {
           throw new Error(`No image found for token ID ${tokenId}`);
