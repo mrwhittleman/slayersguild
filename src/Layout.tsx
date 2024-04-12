@@ -1,10 +1,10 @@
 import { DAppKitProvider } from "@vechain/dapp-kit-react";
 import type { WalletConnectOptions } from "@vechain/dapp-kit";
 import { useTheme } from "next-themes";
+import { Outlet } from "react-router-dom";
 import { NETWORK, NODE_URL, WALLET_CONNECT_PROJECT_ID } from "@/config/index";
 import { ThemeProvider } from "@/components/theme-provider";
 import Navigation from "./components/Navigation";
-import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer";
 import { Toaster } from "./components/ui/toaster";
 import Socialmedia from "./components/Socialmedia";
@@ -30,7 +30,7 @@ export default function Layout() {
       >
         <DappKitContainer>
           <main className="flex justify-center">
-            <div className="flex flex-col items-center w-full max-w-10xl min-h-screen">
+            <div className="flex flex-col items-center w-full max-w-10xl min-h-screen overflow-clip">
               <Navigation />
               <Socialmedia />
               <div className="flex w-full h-full px-4 lg:px-12 4k:px-0 py-12">
