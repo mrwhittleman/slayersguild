@@ -1,9 +1,7 @@
 // useMetadata.ts
 import { useState, useEffect } from "react";
 import { NftMetadataType } from "@/types/types";
-
-const METADATA_URL =
-  "https://u3r3iwywduc6bsvgopanuu5ns7x3tetf6uua77ng6zft2cy6pabq.arweave.net/puO0WxYdBeDKpnPA2lOtl--5kmX1KA_9pvZLPQseeAM/";
+import { METADATA_URL } from "@/config";
 
 export const useMetadata = (tokenId: number) => {
   const [metadata, setMetadata] = useState<NftMetadataType>();
