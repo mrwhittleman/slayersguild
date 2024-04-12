@@ -2,7 +2,7 @@ import GalleryView from "@/components/GalleryView";
 
 const GalleryPage = () => {
   return (
-    <section className="flex flex-col w-full gap-4">
+    <section className="relative flex w-full">
       <GalleryView />
     </section>
   );
