@@ -1,6 +1,6 @@
 export type NftListType = {
   tokenId: string;
-  owner?: string;
+  owner: string | undefined;
 };
 
 export type NftMetadataType = {
