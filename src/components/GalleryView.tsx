@@ -40,7 +40,7 @@ interface CacheEntry {
 }
 
 // Constants for pagination until further implementation
-const TOTAL_ITEMS = Number(MAX_NFT_SUPPLY);
+const TOTAL_ITEMS = MAX_NFT_SUPPLY;
 // Cache expiry time in milliseconds
 const CACHE_EXPIRY = 5 * 60 * 1000;
 
@@ -58,6 +58,7 @@ const GalleryView = () => {
   // Number of items to display depeding on device width
   const PER_PAGE = usePerPage();
   const lastPage = useMemo(() => Math.ceil(TOTAL_ITEMS / PER_PAGE), [PER_PAGE]);
+  console.log("lastPage", typeof lastPage);
 
   // Fetch NFTs from the NFT-List API
   // Initial fetch
