@@ -1,15 +1,28 @@
 import { useWalletName } from "@/hooks/useWalletName";
 import { useWallet } from "@vechain/dapp-kit-react";
 import { useNftList } from "@/hooks/useNftList";
+import { truncateMiddle } from "@/lib/utils";
 import Spinner from "@/components/Spinner";
 import SlayerCardComponent from "@/components/SlayerCardComponent";
 import { NftListType } from "@/types/types";
 import { Grid, GridContent, GridGallery } from "@/components/ui/grid";
+import CopyClipboard from "@/components/CopyClipboard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { Button } from "@/components/ui/button";
 
 const MySlayerPage = () => {
   const wallet = useWallet();
   const { name } = useWalletName(wallet.account);
   const { balance, isLoading, tokens } = useNftList(wallet.account);
+
+  const handleClick = () => {
+    window.open(
+      "https://worldofv.art/collection/Slayers",
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
 
   if (!wallet.account) {
     return (
@@ -22,15 +35,17 @@ const MySlayerPage = () => {
   }
   return (
     <div className="flex flex-col w-full">
-      <div className="flex items-end gap-4">
+      <div className="flex w-fit items-end gap-4">
         <h3 className="text-4xl">Skol,</h3>
-        <p className="text-4xl text-tertiary-foreground">
-          {name
-            ? name.length <= 8
-              ? name.replace(".vet", " .vet")
-              : name
-            : wallet.account}
-        </p>
+        <CopyClipboard copyData={wallet.account}>
+          <p className="text-4xl text-tertiary" title={wallet.account}>
+            {name
+              ? name.length <= 8
+                ? name.replace(".vet", " .vet")
+                : name
+              : truncateMiddle(wallet.account)}
+          </p>
+        </CopyClipboard>
       </div>
       <div className="flex h-full w-full flex-col gap-8">
         <p className="flex gap-1">
@@ -45,23 +60,32 @@ const MySlayerPage = () => {
         ) : (
           <Grid className="grid-cols-1 lg:grid-cols-2 divide-x-0 lg:divide-x divide-y lg:divide-y-0">
             <GridContent className="pr-0 lg:pr-8 pb-8 lg:pb-0">
-              <GridGallery>
-                {tokens.map((token, idx) => {
-                  const slayer = {
-                    tokenId: token.tokenId,
-                    owner: wallet.account,
-                  } as NftListType;
+              {tokens.length > 0 ? (
+                <GridGallery>
+                  {tokens.map((token, idx) => {
+                    const slayer = {
+                      tokenId: token.tokenId,
+                      owner: wallet.account,
+                    } as NftListType;
 
-                  return (
-                    <SlayerCardComponent
-                      key={`${token.tokenId}-gallery-${idx}`}
-                      slayer={slayer}
-                      type="link"
-                      className="cursor-pointer outline-4 hover:outline"
-                    />
-                  );
-                })}
-              </GridGallery>
+                    return (
+                      <SlayerCardComponent
+                        key={`${token.tokenId}-gallery-${idx}`}
+                        slayer={slayer}
+                        type="link"
+                        className="cursor-pointer outline-4 hover:outline"
+                      />
+                    );
+                  })}
+                </GridGallery>
+              ) : (
+                <div className="flex flex-col w-full h-full justify-center items-center gap-4">
+                  <p className="text-2xl">No Slayer found.</p>
+                  <Button className="flex items-center" onClick={handleClick}>
+                    <FontAwesomeIcon icon={faCartShopping} size="xl" />
+                  </Button>
+                </div>
+              )}
             </GridContent>
             <GridContent className="flex-col gap-4 items-center lg:items-start pl-0 lg:pl-8 pt-8 lg:pt-0">
               <p className="max-w-md">
