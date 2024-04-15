@@ -57,15 +57,7 @@ const GalleryView = () => {
 
   // Number of items to display depeding on device width
   const PER_PAGE = usePerPage();
-  const lastPage = useMemo(
-    () => Math.ceil(Number(MAX_ITEMS) / PER_PAGE),
-    [PER_PAGE]
-  );
-
-  useEffect(() => {
-    console.log("PER_PAGE:", PER_PAGE);
-    console.log("lastPage:", lastPage);
-  }, [PER_PAGE, lastPage]);
+  const lastPage = useMemo(() => Math.ceil(MAX_ITEMS / PER_PAGE), [PER_PAGE]);
 
   // Fetch NFTs from the NFT-List API
   // Initial fetch
