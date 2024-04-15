@@ -28,7 +28,7 @@ export function paginationLogic(
   cursorRef: React.MutableRefObject<string>,
   pageIndex: number,
   lastPage: number,
-  TOTAL_ITEMS: number,
+  MAX_NFT_SUPPLY: number,
   PER_PAGE: number,
   direction?: string | undefined
 ) {
@@ -47,7 +47,7 @@ export function paginationLogic(
   } else if (pageIndex === lastPage) {
     queryParams.set(
       "cursor",
-      (TOTAL_ITEMS - (TOTAL_ITEMS % PER_PAGE)).toString()
+      (MAX_NFT_SUPPLY - (MAX_NFT_SUPPLY % PER_PAGE)).toString()
     );
   } else if (direction === "firstPage") {
     queryParams.delete("cursor");

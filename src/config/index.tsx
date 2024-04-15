@@ -20,4 +20,4 @@ export const NFTLIST_API_URL =
 export const WOV_STAKING_ADDRESS =
   process.env.WOV_STAKING_ADDRESS ??
   "0x4aa8053a7f44aa5ab676f0f2cb9c43ca7ff10395";
-export const MAX_NFT_SUPPLY = Number(process.env.MAX_NFT_SUPPLY) ?? 666;
+export const MAX_NFT_SUPPLY = process.env.MAX_NFT_SUPPLY ?? "666";
