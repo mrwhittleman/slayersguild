@@ -15,13 +15,13 @@ export type NftMetadataType = {
 export type NftAttributeType = { trait_type: string; value: string | number };
 
 export type NftHistoryType = {
-  token?: string;
+  token: string;
   from: string;
-  to?: string;
+  to: string;
   event: string;
   timestamp: string;
   txId: string;
-  marketplace?: string;
+  marketplace: string;
   value?: string;
 };
 
