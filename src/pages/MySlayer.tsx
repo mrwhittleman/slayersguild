@@ -21,7 +21,7 @@ const MySlayerPage = () => {
     isLoading: loadingNftList,
     tokens,
   } = useNftList(wallet.account);
-  const [stakedTokens, setStakedTokens] = useState<StakedNftType[]>([]);
+  const [stakedSlayers, setStakedSlayers] = useState<StakedNftType[]>([]);
   const [loadingTransferCheck, setLoadingTransferCheck] = useState(false);
   const isLoading = loadingNftList || loadingTransferCheck;
 
@@ -46,7 +46,7 @@ const MySlayerPage = () => {
         );
       }
 
-      setStakedTokens(data);
+      setStakedSlayers(data);
       setLoadingTransferCheck(false);
     };
 
@@ -89,8 +89,8 @@ const MySlayerPage = () => {
             <Spinner className="w-3 h-3 self-center" />
           ) : tokens.length > 0 ? (
             balance
-          ) : stakedTokens.length > 0 ? (
-            stakedTokens.length
+          ) : stakedSlayers.length > 0 ? (
+            stakedSlayers.length
           ) : (
             "0"
           )}{" "}
@@ -104,7 +104,7 @@ const MySlayerPage = () => {
           /* SLAYER VIEW */
           <Grid className="grid-cols-1 lg:grid-cols-2 divide-x-0 lg:divide-x divide-y lg:divide-y-0">
             <GridContent className="pr-0 lg:pr-8 pb-8 lg:pb-0">
-              {tokens.length > 0 || stakedTokens.length > 0 ? (
+              {tokens.length > 0 || stakedSlayers.length > 0 ? (
                 <GridGallery>
                   {/* NOT STAKED SLAYERS */}
                   {tokens.map((token, idx) => {
@@ -123,7 +123,7 @@ const MySlayerPage = () => {
                     );
                   })}
                   {/* STAKED SLAYERS */}
-                  {stakedTokens.map(
+                  {stakedSlayers.map(
                     (token: { tokenId: string }, idx: number) => {
                       const slayer = {
                         tokenId: token.tokenId,
