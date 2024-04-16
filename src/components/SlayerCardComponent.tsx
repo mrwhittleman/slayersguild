@@ -1,26 +1,33 @@
 import React from "react";
-import { useNavigate, NavigateFunction } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { useNavigate, NavigateFunction, Link } from "react-router-dom";
+import { useWallet } from "@vechain/dapp-kit-react";
 import { useSlayerImage } from "@/hooks/useSlayerImages";
 import { useMetadata } from "@/hooks/useMetadata";
+import { cn } from "@/lib/utils";
+import { SLAYER_CONTRACT, SLAYER_IMAGE_URL, WOV_URL } from "@/config";
+import { NftListType } from "@/types/types";
 import {
   SlayerCard,
   SlayerCardImage,
   SlayerCardHud,
   SlayerCardContent,
 } from "@/components/ui/slayercard";
-import ImageViewer from "./ImageViewer";
+import ImageViewer from "@/components/ImageViewer";
 import Spinner from "@/components/Spinner";
-import SlayerHud from "./SlayerHud";
-import { NftListType } from "@/types/types";
-import { SLAYER_IMAGE_URL } from "@/config";
+import SlayerHud from "@/components/SlayerHud";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 
 // Create the Slayer HUD for each stat line and elemental class
 
 // Handle the click event for the card and redirect to the slayer details page
-const handleClick = (navigate: NavigateFunction, slayer: NftListType) => {
+const handleClick = (
+  navigate: NavigateFunction,
+  slayer: NftListType,
+  staked?: boolean
+) => {
   navigate(`/slayer-details/${slayer.tokenId}`, {
-    state: { slayer },
+    state: { slayer, staked },
   });
 };
 
@@ -28,13 +35,16 @@ export default function SlayerCardComponent({
   slayer,
   className,
   type,
+  staked,
 }: {
   slayer: NftListType;
   className?: string;
-  type?: "link" | "dummy" | null;
+  type?: "link" | "dummy";
+  staked?: boolean;
 }) {
   // Set the cursor, limit, and navigate function only for the gallery view
   const navigate = useNavigate();
+  const wallet = useWallet();
 
   const { metadata: slayerMetadata, metadataLoading } = useMetadata(
     Number(slayer.tokenId)
@@ -49,33 +59,36 @@ export default function SlayerCardComponent({
       // Handle the click event for the card only if the parent component has the link prop
       className={cn("w-full max-w-xl h-fit", className)}
       onClick={
-        type === "link" && slayerMetadata
-          ? () => slayerMetadata && handleClick(navigate, slayer)
+        type === "link"
+          ? () => handleClick(navigate, slayer, staked)
           : undefined
       }
     >
       <SlayerCardImage>
-        {!imageLoading && slayerImage && slayerMetadata ? (
-          <>
-            <div className="relative flex w-full">
-              <img
-                src={slayerImage}
-                alt={slayerMetadata.name}
-                width={640}
-                height={640}
-              />
-              {type !== "link" && type !== "dummy" && (
-                <>
-                  <ImageViewer
-                    imageUrl={
-                      SLAYER_IMAGE_URL + slayerMetadata.tokenId + ".jpg"
-                    }
-                    altName={slayerMetadata.name}
-                  />
-                </>
-              )}
-            </div>
-          </>
+        {!imageLoading && !metadataLoading ? (
+          slayerImage &&
+          slayerMetadata && (
+            <>
+              <div className="relative flex w-full">
+                <img
+                  src={slayerImage}
+                  alt={slayerMetadata.name}
+                  width={640}
+                  height={640}
+                />
+                {type !== "link" && type !== "dummy" && (
+                  <>
+                    <ImageViewer
+                      imageUrl={
+                        SLAYER_IMAGE_URL + slayerMetadata.tokenId + ".jpg"
+                      }
+                      altName={slayerMetadata.name}
+                    />
+                  </>
+                )}
+              </div>
+            </>
+          )
         ) : (
           <div className="flex w-[640] h-[260px] justify-center items-center bg-white/15">
             <Spinner />
@@ -84,11 +97,26 @@ export default function SlayerCardComponent({
       </SlayerCardImage>
       {/* Name and Rank */}
       {!metadataLoading ? (
-        <SlayerCardContent className="border-b">
-          <h2 className="text-lg font-normal">{slayerMetadata?.name}</h2>
-          <p className="text-muted-foreground text-xs">
-            Rank: {slayerMetadata?.rank}
-          </p>
+        <SlayerCardContent className="flex flex-row justify-between border-b">
+          <div className="flex flex-col">
+            <h2 className="text-lg font-normal">{slayerMetadata?.name}</h2>
+            <p className="text-muted-foreground text-xs">
+              Rank: {slayerMetadata?.rank}
+            </p>
+          </div>
+          {slayer.owner &&
+            slayer.owner !== wallet.account &&
+            type !== "link" &&
+            type !== "dummy" && (
+              <Link
+                to={`${WOV_URL}/token/${SLAYER_CONTRACT}/${slayer.tokenId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center mr-4 hover:text-tertiary hover:scale-110 transition-all"
+              >
+                <FontAwesomeIcon icon={faShoppingCart} size="xl" />
+              </Link>
+            )}
         </SlayerCardContent>
       ) : (
         <div className="flex w-full h-[65px] justify-center items-center">

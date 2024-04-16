@@ -1,3 +1,5 @@
+import { API_URL, WOV_STAKING_ADDRESS } from "@/config";
+import { NftHistoryType, NftTransferType } from "@/types/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -68,45 +70,8 @@ export function getInitialPageIndex() {
   return { queryParams, cursor, newPageIndex };
 }
 
-export function isCacheEntryValid(cacheEntry: any, CACHE_EXPIRY: number) {
-  return cacheEntry && Date.now() - cacheEntry.timestamp < CACHE_EXPIRY;
-}
-
-export function setNftCache(
-  setNfts: any,
-  cursorRef: any,
-  setPageIndex: any,
-  setLoading: any,
-  cacheEntry: any
-) {
-  setNfts(cacheEntry.data);
-  cursorRef.current = cacheEntry.cursor;
-  setPageIndex(cacheEntry.pageIndex);
-  setLoading(false);
-}
-
-export function updateNftCache(
-  setCache: any,
-  newPageIndex: number,
-  data: any,
-  newCursor: string
-) {
-  setCache((prevCache: any) => ({
-    ...prevCache,
-    [newPageIndex]: {
-      data: data.page,
-      cursor: newCursor,
-      pageIndex: newPageIndex,
-      timestamp: Date.now(),
-    },
-  }));
-}
-
-export async function fetchNftsFromApi(
-  NFTLIST_API_URL: string,
-  newQueryParams: string
-) {
-  const response = await fetch(NFTLIST_API_URL + newQueryParams);
+export async function fetchNftsFromApi(newQueryParams: string) {
+  const response = await fetch(`${API_URL}/nfts${newQueryParams}`);
   if (!response.ok) {
     throw new Error(`API request failed with status ${response.status}`);
   }
@@ -114,15 +79,42 @@ export async function fetchNftsFromApi(
   return data;
 }
 
-export async function fetchNftHistoryFromApi(
-  NFTHISTORY_API_URL: string,
-  tokenId: string
-) {
-  console.log(NFTHISTORY_API_URL + `?tokenId=${tokenId}`);
-  const response = await fetch(NFTHISTORY_API_URL + `?tokenId=${tokenId}`);
+export async function fetchNftHistoryFromApi(tokenId: string) {
+  const response = await fetch(
+    `${API_URL}/history?tokenId=${tokenId}&event=Staked`
+  );
   if (!response.ok) {
     throw new Error(`API request failed with status ${response.status}`);
   }
   const data = await response.json();
   return data;
+}
+
+export async function stakingCheck(tokenId: string) {
+  const data = await fetchNftHistoryFromApi(tokenId);
+  const stakedEvent = data.page.find(
+    (item: NftHistoryType) => item.event === "Staked"
+  );
+  return stakedEvent.from;
+}
+
+export async function fetchTransfersFromApi(address: string) {
+  const response = await fetch(`${API_URL}/transfers?address=${address}`);
+  if (!response.ok) {
+    throw new Error(`API request failed with status ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
+
+export async function transfersCheck(address: string) {
+  const data: NftTransferType = await fetchTransfersFromApi(address);
+  const transferEvent = data.page
+    .flatMap((page) => page.transfers)
+    .filter(
+      (transfer) =>
+        transfer.from === address && transfer.to === WOV_STAKING_ADDRESS
+    )
+    .sort((a, b) => Number(a.tokenId) - Number(b.tokenId));
+  return transferEvent;
 }
