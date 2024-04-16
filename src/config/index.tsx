@@ -15,14 +15,8 @@ export const SLAYER_IMAGE_URL =
 export const METADATA_URL =
   process.env.METADATA_URL ??
   "https://u3r3iwywduc6bsvgopanuu5ns7x3tetf6uua77ng6zft2cy6pabq.arweave.net/puO0WxYdBeDKpnPA2lOtl--5kmX1KA_9pvZLPQseeAM/";
-export const NFTLIST_API_URL =
-  process.env.NFTLIST_API_URL ?? "https://slayersguild-b60.pages.dev/api/nfts";
-export const NFTHISTORY_API_URL =
-  process.env.HISTORY_API_URL ??
-  "https://slayersguild-b60.pages.dev/api/history";
-export const NFTTRANSFER_API_URL =
-  process.env.NFTTRANSFER_API_URL ??
-  "https://slayersguild-b60.pages.dev/api/transfers";
+export const API_URL =
+  process.env.API_URL ?? "https://slayersguild-b60.pages.dev/api";
 export const WOV_STAKING_ADDRESS =
   process.env.WOV_STAKING_ADDRESS ??
   "0x4aa8053a7f44aa5ab676f0f2cb9c43ca7ff10395";

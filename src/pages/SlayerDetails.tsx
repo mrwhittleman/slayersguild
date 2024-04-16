@@ -5,7 +5,7 @@ import { useMetadata } from "@/hooks/useMetadata";
 import { useWalletName } from "@/hooks/useWalletName";
 import { usePerPage } from "@/hooks/usePerPage";
 import { stakingCheck, truncateMiddle } from "@/lib/utils";
-import { WOV_STAKING_ADDRESS, NFTLIST_API_URL } from "@/config";
+import { WOV_STAKING_ADDRESS, API_URL } from "@/config";
 import { NftListType } from "@/types/types";
 import { Grid, GridContent } from "@/components/ui/grid";
 import { SlayerCard, SlayerCardContent } from "@/components/ui/slayercard";
@@ -36,7 +36,7 @@ const SlayerDetailsPage = () => {
       if (location.state.staked) setStaked(location.state.staked);
     } else {
       fetch(
-        NFTLIST_API_URL + `?limit=1&cursor=${(Number(tokenId) - 1).toString()}`
+        `${API_URL}/nfts?limit=1&cursor=${(Number(tokenId) - 1).toString()}`
       )
         .then((response) => {
           if (!response.ok) {
@@ -51,21 +51,21 @@ const SlayerDetailsPage = () => {
 
   // Check if the slayer owner is the staking contract, if so, fetch the original owner
   useEffect(() => {
-    if (slayer) {
-      if (slayer.owner === WOV_STAKING_ADDRESS) {
-        setLoading(true);
-        setStaked(true);
-        (async () => {
-          const originalOwner = await stakingCheck(slayer.tokenId);
-          setSlayer((prev) => ({
-            ...prev,
-            owner: originalOwner,
-            tokenId: prev?.tokenId || slayer.tokenId,
-          }));
-          setLoading(false);
-        })();
-      }
+    if (slayer?.owner !== WOV_STAKING_ADDRESS) {
+      return;
     }
+    setLoading(true);
+    setStaked(true);
+    stakingCheck(slayer.tokenId)
+      .then((owner) => {
+        setSlayer((prev) => ({
+          ...prev,
+          owner,
+          tokenId: prev?.tokenId ?? slayer.tokenId,
+        }));
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
   }, [slayer]);
 
   // Handle the click event for the back button

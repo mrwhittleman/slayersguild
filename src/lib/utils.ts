@@ -1,9 +1,4 @@
-import {
-  NFTHISTORY_API_URL,
-  NFTLIST_API_URL,
-  NFTTRANSFER_API_URL,
-  WOV_STAKING_ADDRESS,
-} from "@/config";
+import { API_URL, WOV_STAKING_ADDRESS } from "@/config";
 import { NftHistoryType, NftTransferType } from "@/types/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -76,7 +71,7 @@ export function getInitialPageIndex() {
 }
 
 export async function fetchNftsFromApi(newQueryParams: string) {
-  const response = await fetch(NFTLIST_API_URL + newQueryParams);
+  const response = await fetch(`${API_URL}/nfts${newQueryParams}`);
   if (!response.ok) {
     throw new Error(`API request failed with status ${response.status}`);
   }
@@ -86,7 +81,7 @@ export async function fetchNftsFromApi(newQueryParams: string) {
 
 export async function fetchNftHistoryFromApi(tokenId: string) {
   const response = await fetch(
-    NFTHISTORY_API_URL + `?tokenId=${tokenId}&event=Staked`
+    `${API_URL}/history?tokenId=${tokenId}&event=Staked`
   );
   if (!response.ok) {
     throw new Error(`API request failed with status ${response.status}`);
@@ -104,7 +99,7 @@ export async function stakingCheck(tokenId: string) {
 }
 
 export async function fetchTransfersFromApi(address: string) {
-  const response = await fetch(NFTTRANSFER_API_URL + `?address=${address}`);
+  const response = await fetch(`${API_URL}/transfers?address=${address}`);
   if (!response.ok) {
     throw new Error(`API request failed with status ${response.status}`);
   }
