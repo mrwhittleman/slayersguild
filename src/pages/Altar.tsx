@@ -7,7 +7,7 @@ import {
   SelectContent,
   Select,
 } from "@/components/ui/select";
-import { useConnex } from "@vechain/dapp-kit-react";
+import { useConnex, useWallet } from "@vechain/dapp-kit-react";
 import { SLAYER_WALLET, SLAYER_MINT_CONTRACT, SPONSORSHIP_URL, NETWORK } from "@/config/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -16,6 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 export default function AltarPage() {
   const connex = useConnex();
+  const { account } = useWallet();
   const { toast } = useToast();
 
   const [selectedValue, setSelectedValue] = React.useState(1);
@@ -86,6 +87,7 @@ export default function AltarPage() {
         ])
         .delegate(SPONSORSHIP_URL)
         .comment(`Offering to the treasury of ${selectedValue} VTHO)`)
+        .signer(account)
         .request();
 
       setTxId(txid);
