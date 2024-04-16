@@ -185,6 +185,7 @@ export default function AltarPage() {
             </SelectTrigger>
             <SelectContent position="item-aligned">
               <SelectItem value="1">1 VTHO</SelectItem>
+              <SelectItem value="5000">5,000 VTHO</SelectItem>
               <SelectItem value="10000">10,000 VTHO</SelectItem>
               <SelectItem value="15000">15,000 VTHO</SelectItem>
               <SelectItem value="25000">25,000 VTHO</SelectItem>
