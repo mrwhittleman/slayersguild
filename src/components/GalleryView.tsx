@@ -5,17 +5,17 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useToast } from "./ui/use-toast";
 import { useLocation, useNavigate } from "react-router-dom";
+import { usePerPage } from "@/hooks/usePerPage";
 import {
   fetchNftsFromApi,
   getInitialPageIndex,
   getQueryParams,
-  isCacheEntryValid,
   paginationLogic,
-  setNftCache,
-  updateNftCache,
 } from "@/lib/utils";
+import { MAX_NFT_SUPPLY } from "@/config";
+import { NftListType } from "@/types/types";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Pagination,
   PaginationContent,
@@ -25,19 +25,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Grid, GridContent, GridGallery } from "./ui/grid";
-import SlayerCardComponent from "./SlayerCardComponent";
-import Spinner from "./Spinner";
-import { NftListType } from "@/types/types";
-import { MAX_NFT_SUPPLY, NFTLIST_API_URL } from "@/config";
-import { usePerPage } from "@/hooks/usePerPage";
-
-interface CacheEntry {
-  data: NftListType[];
-  timestamp: number;
-  cursor: string;
-  pageIndex: number;
-}
+import { Grid, GridContent, GridGallery } from "@/components/ui/grid";
+import SlayerCardComponent from "@/components/SlayerCardComponent";
+import Spinner from "@/components/Spinner";
 
 // Set the maximum number of items
 const MAX_ITEMS = Number(MAX_NFT_SUPPLY);
@@ -50,7 +40,6 @@ const GalleryView = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [nfts, setNfts] = useState<NftListType[]>([]);
-  const [cache, setCache] = useState<Record<number, CacheEntry>>({});
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -62,37 +51,40 @@ const GalleryView = () => {
   // Fetch NFTs from the NFT-List API
   // Initial fetch
   useEffect(() => {
-    // Check if the query params contain a cursor and thus are page 1 or not (for initial fetch) if not, fetch the NFTs for that page and the right pageIndex
     const { newPageIndex, cursor } = getInitialPageIndex();
-    // Restore the previous pageIndex and cursor values
     setPageIndex(newPageIndex);
     cursorRef.current = cursor ?? "";
 
-    // Fetch the NFTs
     (async () => {
       setLoading(true);
       setErrorMessage("");
 
-      // Get the query params
       const queryParams = getQueryParams(PER_PAGE);
-      // Setting the new query params
       const newQueryParams = "?" + queryParams.toString();
-      // Check if the cache entry is valid
-      const cacheEntry = cache[newPageIndex];
-      const isCacheValid = isCacheEntryValid(cacheEntry, CACHE_EXPIRY);
+      const cacheEntry = JSON.parse(
+        sessionStorage.getItem(`cache_${newPageIndex}`) || "null"
+      );
+      const isCacheValid =
+        cacheEntry && Date.now() - cacheEntry.timestamp < 30000; // 30 seconds
 
       if (cacheEntry && isCacheValid) {
-        setNftCache(setNfts, cursorRef, setPageIndex, setLoading, cacheEntry);
+        setNfts(cacheEntry.page);
+        cursorRef.current = cacheEntry.cursor;
+        setPageIndex(newPageIndex);
       } else {
-        // Fetch the NFTs from the API
         try {
-          const data = await fetchNftsFromApi(NFTLIST_API_URL, newQueryParams);
+          const data = await fetchNftsFromApi(newQueryParams);
           setNfts(data.page);
-          const newCursor = data.cursor;
-          cursorRef.current = newCursor;
+          cursorRef.current = data.cursor;
           setPageIndex(newPageIndex);
-          // Update the cache entry to include cursor and pageIndex
-          updateNftCache(setCache, newPageIndex, data, newCursor);
+          sessionStorage.setItem(
+            `cache_page_${newPageIndex}`,
+            JSON.stringify({
+              page: data.page,
+              cursor: data.cursor,
+              timestamp: Date.now(),
+            })
+          );
         } catch (err: any) {
           setErrorMessage(err.message ?? "An error occurred");
         } finally {
@@ -100,7 +92,7 @@ const GalleryView = () => {
         }
       }
     })();
-  }, [location.search]); // Add any other dependencies here
+  }, [location.search]);
 
   // Display an error toast if there is an error message
   useEffect(() => {
