@@ -87,12 +87,8 @@ const MySlayerPage = () => {
           You currently own{" "}
           {isLoading ? (
             <Spinner className="w-3 h-3 self-center" />
-          ) : tokens.length > 0 ? (
-            balance
-          ) : stakedSlayers.length > 0 ? (
-            stakedSlayers.length
           ) : (
-            "0"
+            tokens.length + stakedSlayers.length
           )}{" "}
           Slayer!
         </p>
