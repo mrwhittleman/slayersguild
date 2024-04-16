@@ -8,7 +8,7 @@ import {
   Select,
 } from "@/components/ui/select";
 import { useConnex, useWallet } from "@vechain/dapp-kit-react";
-import { SLAYER_WALLET, SLAYER_MINT_CONTRACT, SPONSORSHIP_URL, NETWORK } from "@/config/index";
+import { SLAYER_WALLET, SLAYER_MINT_CONTRACT, NETWORK } from "@/config/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -85,7 +85,6 @@ export default function AltarPage() {
             comment: `Sacrifice ${selectedValue} VTHO for SL4Y`
           }
         ])
-        .delegate(SPONSORSHIP_URL)
         .comment(`Offering to the treasury of ${selectedValue} VTHO)`)
         .signer(account)
         .request();
