@@ -8,7 +8,7 @@ import {
   Select,
 } from "@/components/ui/select";
 import { useConnex } from "@vechain/dapp-kit-react";
-import { SLAYER_WALLET, SPONSORSHIP_URL, NETWORK } from "@/config/index";
+import { SLAYER_WALLET, SLAYER_MINT_CONTRACT, SPONSORSHIP_URL, NETWORK } from "@/config/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,24 +36,54 @@ export default function AltarPage() {
     setTxId("");
 
     try {
-      const transferClause = connex.thor
+      const vthoValue = `${selectedValue}${"0".repeat(18)}`
+      const approvalClause = connex.thor
         .account("0x0000000000000000000000000000456e65726779")
         .method({
-          constant: false,
-          inputs: [
-            { name: "_to", type: "address" },
-            { name: "_amount", type: "uint256" },
+          "constant": false,
+          "inputs": [
+            { "name": "_spender", "type": "address" },
+            { "name": "_value", "type": "uint256" }
           ],
-          name: "transfer",
-          outputs: [{ name: "success", type: "bool" }],
-          payable: false,
-          stateMutability: "nonpayable",
-          type: "function",
+          "name": "approve",
+          "outputs": [
+            { "name": "success", "type": "bool" }
+          ],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
         })
-        .asClause(SLAYER_WALLET, `${selectedValue}${"0".repeat(18)}`);
+        .asClause(SLAYER_MINT_CONTRACT, vthoValue);
+
+      const mintClause = connex.thor
+        .account(SLAYER_MINT_CONTRACT)
+        .method({
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_VTHOAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "swapVTHOforSL4Y",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        })
+        .asClause(vthoValue);
+
 
       const { txid } = await connex.vendor
-        .sign("tx", [transferClause])
+        .sign("tx", [
+          {
+            ...approvalClause,
+            comment: `Approve access to ${selectedValue} VTHO`
+          },
+          {
+            ...mintClause,
+            comment: `Sacrifice ${selectedValue} VTHO for SL4Y`
+          }
+        ])
         .delegate(SPONSORSHIP_URL)
         .comment(`Offering to the treasury of ${selectedValue} VTHO)`)
         .request();
