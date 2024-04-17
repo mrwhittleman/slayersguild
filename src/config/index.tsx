@@ -3,12 +3,12 @@ export const WALLET_CONNECT_PROJECT_ID =
 export const NETWORK = (process.env.NETWORK ?? "main") as "main" | "test";
 export const NODE_URL =
   process.env.NODE_URL ?? `https://node-${NETWORK}net.vechain.energy`;
-export const SPONSORSHIP_URL =
-  process.env.SPONSORSHIP_URL ?? "https://sponsor-testnet.vechain.energy/by/90";
 export const SLAYER_WALLET =
   process.env.SLAYER_WALLET ?? "0x3665eD160eDD2bC236fBDA83274eacA08769B0b9";
 export const SLAYER_CONTRACT =
   process.env.SLAYER_CONTRACT ?? "0x84466753b03e2f6d74afe8bf356c09e63dd36d67";
+export const SLAYER_MINT_CONTRACT =
+  process.env.SLAYER_MINT_CONTRACT ?? "0x335499b76Cf2A8A6e58717d62501218bB7862FcC";
 export const SLAYER_IMAGE_URL =
   process.env.SLAYER_IMAGE_URL ??
   "https://4wz7nuijhm67qgxnqw54egbv52zocgq3qei3gbb7la5vuvowh47q.arweave.net/5bP20Qk7Pfga7YW7whg17rLhGhuBEbMEP1g7WlXWPz8/";

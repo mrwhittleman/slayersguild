@@ -1,6 +1,6 @@
 import React from "react";
-import { useConnex } from "@vechain/dapp-kit-react";
-import { SLAYER_WALLET, SPONSORSHIP_URL, NETWORK } from "@/config/index";
+import { useConnex, useWallet } from "@vechain/dapp-kit-react";
+import { SLAYER_WALLET, SLAYER_MINT_CONTRACT, NETWORK } from "@/config/index";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import { faCopy, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 export default function AltarPage() {
   const connex = useConnex();
+  const { account } = useWallet();
   const { toast } = useToast();
   const [selectedValue, setSelectedValue] = React.useState(1);
   const [balance, setBalance] = React.useState(0);
@@ -34,26 +35,56 @@ export default function AltarPage() {
     setTxId("");
 
     try {
-      const transferClause = connex.thor
+      const vthoValue = `${selectedValue}${"0".repeat(18)}`
+      const approvalClause = connex.thor
         .account("0x0000000000000000000000000000456e65726779")
         .method({
-          constant: false,
-          inputs: [
-            { name: "_to", type: "address" },
-            { name: "_amount", type: "uint256" },
+          "constant": false,
+          "inputs": [
+            { "name": "_spender", "type": "address" },
+            { "name": "_value", "type": "uint256" }
           ],
-          name: "transfer",
-          outputs: [{ name: "success", type: "bool" }],
-          payable: false,
-          stateMutability: "nonpayable",
-          type: "function",
+          "name": "approve",
+          "outputs": [
+            { "name": "success", "type": "bool" }
+          ],
+          "payable": false,
+          "stateMutability": "nonpayable",
+          "type": "function"
         })
-        .asClause(SLAYER_WALLET, `${selectedValue}${"0".repeat(18)}`);
+        .asClause(SLAYER_MINT_CONTRACT, vthoValue);
+
+      const mintClause = connex.thor
+        .account(SLAYER_MINT_CONTRACT)
+        .method({
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_VTHOAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "swapVTHOforSL4Y",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        })
+        .asClause(vthoValue);
+
 
       const { txid } = await connex.vendor
-        .sign("tx", [transferClause])
-        .delegate(SPONSORSHIP_URL)
+        .sign("tx", [
+          {
+            ...approvalClause,
+            comment: `Approve access to ${selectedValue} VTHO`
+          },
+          {
+            ...mintClause,
+            comment: `Sacrifice ${selectedValue} VTHO for SL4Y`
+          }
+        ])
         .comment(`Offering to the treasury of ${selectedValue} VTHO)`)
+        .signer(account)
         .request();
 
       setTxId(txid);
@@ -152,7 +183,7 @@ export default function AltarPage() {
               <SelectValue placeholder="Make An Offering" />
             </SelectTrigger>
             <SelectContent position="item-aligned">
-              <SelectItem value="1">1 VTHO</SelectItem>
+              <SelectItem value="5000">5,000 VTHO</SelectItem>
               <SelectItem value="10000">10,000 VTHO</SelectItem>
               <SelectItem value="15000">15,000 VTHO</SelectItem>
               <SelectItem value="25000">25,000 VTHO</SelectItem>
