@@ -38,12 +38,7 @@ export default function TreasuryInfo({ balance }: { balance: number }) {
             <div className="flex flex-col w-full gap-2 pt-4">
               {/* VTHO BALANCE */}
               <div className="flex w-full h-full gap-4 items-center">
-                <img
-                  src={VthoTokenImage}
-                  alt="VTHO Logo"
-                  width={20}
-                  className="h-fit"
-                />
+                <img src={VthoTokenImage} alt="VTHO Logo" width={20} />
                 <p className="font-semibold px-2 w-full  text-end">
                   {balance} <span className="font-thin">VTHO</span>
                 </p>
