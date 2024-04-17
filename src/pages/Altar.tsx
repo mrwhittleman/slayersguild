@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useConnex, useWallet } from "@vechain/dapp-kit-react";
 import { SLAYER_WALLET, SLAYER_MINT_CONTRACT } from "@/config/index";
 import { truncateMiddle } from "@/lib/utils";
+import SlayerTokenImage from "@/assets/SL4YR_Token.png";
 import {
   SlayerCard,
   SlayerCardContent,
@@ -23,10 +24,8 @@ import CopyClipboard from "@/components/CopyClipboard";
 import UserInfo from "@/components/UserInfo";
 import TreasuryInfo from "@/components/TreasuryInfo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowRight,
-  faMagnifyingGlass,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import InfoPanel from "@/components/InfoPanel";
 
 export default function AltarPage() {
   const connex = useConnex();
@@ -161,27 +160,33 @@ export default function AltarPage() {
   }, [connex, account]);
 
   return (
-    <section className="flex w-full h-full">
-      <div className="flex flex-col h-fit lg:flex-row w-full gap-12 lg:justify-center items-center lg:items-stretch">
+    <section className="flex flex-col w-full h-full gap-8 lg:gap-12">
+      <div className="flex flex-col h-fit lg:flex-row w-full gap-8 lg:gap-12 lg:justify-center items-center lg:items-stretch">
         <UserInfo
           account={account}
           balanceUser={balanceUser}
           selectedValue={selectedValue}
         />
         <SlayerCard className="relative w-full max-w-md p-4 overflow-visible">
-          <div className="absolute top-1/2 -left-3 transform -translate-y-1/2 rotate-90 lg:top-0 lg:left-1/2 lg:-translate-x-1/2 lg:rotate-0">
+          {/*           <div className="absolute top-1/2 -left-3 transform -translate-y-1/2 rotate-90 lg:top-0 lg:left-1/2 lg:-translate-x-1/2 lg:rotate-0">
             <FontAwesomeIcon
               className="drop-shadow-lg"
               icon={faArrowRight}
               size="xl"
             />
-          </div>
+          </div> */}
           <SlayerCardHeader>
             <SlayerCardTitle className="flex flex-row justify-between text-2xl">
-              Offering to the Guild
+              Offer
+              <img
+                className="drop-shadow-lg"
+                src={SlayerTokenImage}
+                alt="Slayer Token"
+                width={32}
+              />
             </SlayerCardTitle>
             <p className="text-tertiary">
-              Make an offering to the Slayer Guild
+              Make an offering to the Slayers Guild
             </p>
           </SlayerCardHeader>
           <SlayerCardContent className="flex flex-col gap-6">
@@ -231,6 +236,9 @@ export default function AltarPage() {
           )}
         </SlayerCard>
         <TreasuryInfo balance={balance} />
+      </div>
+      <div className="flex justify-center w-full">
+        <InfoPanel />
       </div>
     </section>
   );

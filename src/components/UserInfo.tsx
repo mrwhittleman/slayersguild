@@ -30,14 +30,14 @@ export default function UserInfo({
 
   return (
     <SlayerCard className="relative w-full max-w-md p-4 overflow-visible">
-      <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 lg:top-0 lg:left-1/2 lg:-translate-x-1/2">
+      {/*       <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 lg:top-0 lg:left-1/2 lg:-translate-x-1/2">
         <img
           className="drop-shadow-lg w-8 h-8 lg:w-10 lg:h-10"
           src={VthoTokenImage}
           alt="VTHO Token"
           width={45}
         />
-      </div>
+      </div> */}
       <SlayerCardHeader>
         <SlayerCardTitle className="text-2xl">Wallet Balance</SlayerCardTitle>
         {account && (
@@ -66,40 +66,35 @@ export default function UserInfo({
               </div>
               <div className="flex flex-col w-full gap-2 pt-4">
                 {/* VTHO BALANCE */}
-                <div className="flex w-full h-full gap-4 items-center">
+                <div className="flex w-full h-full items-center">
                   <img src={VthoTokenImage} alt="VTHO Logo" width={20} />
                   {showBalanceUser ? (
-                    <p
-                      className={`font-semibold px-2 w-full  text-end ${
-                        selectedValue > balanceUser &&
-                        "text-destructive animate-pulse"
-                      }`}
-                    >
-                      {balanceUser}{" "}
-                      <span className="font-thin text-primary animate-none">
-                        VTHO
-                      </span>
+                    <>
+                      <p
+                        className={`font-semibold px-2 w-full  text-end ${
+                          selectedValue > balanceUser &&
+                          "text-destructive animate-pulse"
+                        }`}
+                      >
+                        {balanceUser}{" "}
+                      </p>
+                      <p>VTHO</p>
+                    </>
+                  ) : (
+                    <p className="bg-white/65 w-full h-full ml-8 px-2 py-3 rounded-full" />
+                  )}
+                </div>
+                {/* SL4Y BALANCE
+                <div className="flex w-full h-full gap-4 items-center">
+                  <img src={SlayerTokenImage} alt="Slayer Logo" width={20} />
+                  {showBalanceUser ? (
+                    <p className="font-semibold px-2 w-full  text-end">
+                      0 <span className="font-thin">SL4Y</span>
                     </p>
                   ) : (
                     <p className="bg-white/65 w-full  h-full px-2 py-3 rounded-full" />
                   )}
-                </div>
-                {/* SL4Y BALANCE
-                  <div className="flex w-full h-full gap-4 items-center">
-                    <img
-                      src={SlayerTokenImage}
-                      alt="Slayer Logo"
-                      width={20}
-                      className="h-fit"
-                    />
-                    {showBalanceUser ? (
-                      <p className="font-semibold px-2 w-full  text-end">
-                        0 <span className="font-thin">SL4Y</span>
-                      </p>
-                    ) : (
-                      <p className="bg-white/65 w-full  h-full px-2 py-3 rounded-full" />
-                    )}
-                  </div> */}
+                </div> */}
               </div>
             </div>
           </div>
