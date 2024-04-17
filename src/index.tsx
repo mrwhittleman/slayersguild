@@ -1,12 +1,12 @@
 import ReactDOM from "react-dom/client";
-import App from "@/App";
-import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Layout from "./Layout";
-import MySlayerPage from "./pages/MySlayer";
-import GalleryPage from "./pages/Gallery";
-import AltarPage from "./pages/Altar";
-import SlayerDetailsPage from "./pages/SlayerDetails";
+import "@/index.css";
+import App from "@/App";
+import Layout from "@/Layout";
+import MySlayerPage from "@/pages/MySlayer";
+import GalleryPage from "@/pages/Gallery";
+import AltarPage from "@/pages/Altar";
+import SlayerDetailsPage from "@/pages/SlayerDetails";
 
 const router = createBrowserRouter([
   {

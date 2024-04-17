@@ -1,7 +1,7 @@
 import React from "react";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
-import { Table, TableBody, TableCell, TableRow } from "./ui/table";
 
 // TESTING ONLY!!!
 // Take a color for rarity starting from gray -> green -> blue -> purple -> orange

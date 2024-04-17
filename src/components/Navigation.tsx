@@ -1,10 +1,6 @@
 import { useCallback, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
-import Wallet from "@/components/Wallet";
-import Logo from "@/assets/VSG-LOGO_1.png";
 import {
   Sheet,
   SheetContent,
@@ -13,6 +9,10 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import Wallet from "@/components/Wallet";
+import Logo from "@/assets/VSG-LOGO_1.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 type Link = {
   name: string;

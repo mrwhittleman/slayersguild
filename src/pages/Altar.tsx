@@ -1,4 +1,8 @@
 import React from "react";
+import { useConnex, useWallet } from "@vechain/dapp-kit-react";
+import { SLAYER_WALLET, SLAYER_MINT_CONTRACT, NETWORK } from "@/config/index";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import {
   SelectValue,
@@ -7,21 +11,15 @@ import {
   SelectContent,
   Select,
 } from "@/components/ui/select";
-import { useConnex, useWallet } from "@vechain/dapp-kit-react";
-import { SLAYER_WALLET, SLAYER_MINT_CONTRACT, NETWORK } from "@/config/index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
 
 export default function AltarPage() {
   const connex = useConnex();
   const { account } = useWallet();
   const { toast } = useToast();
-
   const [selectedValue, setSelectedValue] = React.useState(1);
   const [balance, setBalance] = React.useState(0);
-
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [txId, setTxId] = React.useState("");

@@ -1,13 +1,13 @@
+import { Outlet } from "react-router-dom";
 import { DAppKitProvider } from "@vechain/dapp-kit-react";
 import type { WalletConnectOptions } from "@vechain/dapp-kit";
 import { useTheme } from "next-themes";
-import { Outlet } from "react-router-dom";
 import { NETWORK, NODE_URL, WALLET_CONNECT_PROJECT_ID } from "@/config/index";
 import { ThemeProvider } from "@/components/theme-provider";
-import Navigation from "./components/Navigation";
-import Footer from "./components/Footer";
-import { Toaster } from "./components/ui/toaster";
-import Socialmedia from "./components/Socialmedia";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { Toaster } from "@/components/ui/toaster";
+import Socialmedia from "@/components/Socialmedia";
 
 const walletConnectOptions: WalletConnectOptions = {
   projectId: WALLET_CONNECT_PROJECT_ID,
