@@ -7,6 +7,7 @@ import { usePerPage } from "@/hooks/usePerPage";
 import { stakingCheck, truncateMiddle } from "@/lib/utils";
 import { WOV_STAKING_ADDRESS, API_URL } from "@/config";
 import { NftListType } from "@/types/types";
+import { useToast } from "@/components/ui/use-toast";
 import { Grid, GridContent } from "@/components/ui/grid";
 import { SlayerCard, SlayerCardContent } from "@/components/ui/slayercard";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const SlayerDetailsPage = () => {
+  const { toast } = useToast();
   const wallet = useWallet();
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,6 +30,7 @@ const SlayerDetailsPage = () => {
   const { name } = useWalletName(slayer?.owner || null);
   const [staked, setStaked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Check if there is a slayer in the location state or fetch the slayer from the API based on the tokenId in the URL
   useEffect(() => {
@@ -45,7 +48,9 @@ const SlayerDetailsPage = () => {
           return response.json();
         })
         .then((data) => setSlayer(data.page[0]))
-        .catch((error) => console.error(error));
+        .catch((err: any) => {
+          setErrorMessage(err.message ?? "Could not load the current Slayer.");
+        });
     }
   }, [location.state, tokenId]);
 
@@ -64,9 +69,22 @@ const SlayerDetailsPage = () => {
           tokenId: prev?.tokenId ?? slayer.tokenId,
         }));
       })
-      .catch((err) => console.error(err))
+      .catch((err: any) => {
+        setErrorMessage(err.message ?? "Could not load the original owner.");
+      })
       .finally(() => setLoading(false));
   }, [slayer]);
+
+  //
+  useEffect(() => {
+    if (errorMessage) {
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  }, [errorMessage]);
 
   // Handle the click event for the back button
   const handleClick = () => {
