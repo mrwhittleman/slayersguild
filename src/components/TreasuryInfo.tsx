@@ -12,15 +12,7 @@ import VthoTokenImage from "@/assets/VTHO_Token_Icon.png";
 
 export default function TreasuryInfo({ balance }: { balance: number }) {
   return (
-    <SlayerCard className="relative w-full max-w-md p-4 overflow-visible">
-      {/*       <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 lg:top-0 lg:left-1/2 lg:-translate-x-1/2">
-        <img
-          className="drop-shadow-lg w-8 h-8 lg:w-10 lg:h-10"
-          src={SlayerTokenImage}
-          alt="Slayer Token"
-          width={45}
-        />
-      </div> */}
+    <SlayerCard className="relative w-full h-fit max-w-md p-4 overflow-visible">
       <SlayerCardHeader>
         <SlayerCardTitle className="text-2xl">Treasury Balance</SlayerCardTitle>
         {SLAYER_WALLET && (
