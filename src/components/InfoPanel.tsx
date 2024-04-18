@@ -16,16 +16,16 @@ const InfoPanel = () => {
             <AccordionTrigger>Info</AccordionTrigger>
             <AccordionContent>
               <SlayerCardContent className="w-full">
-                <div className="flex flex-col w-full pb-8 lg:pb-0 lg:pr-8">
+                <div className="flex flex-col w-full">
                   <p className="mb-2">
                     As Slayers make an offering, they mint and receive SL4Y
                     tokens. These tokens will power the Slayers Guild dApp and
                     future Slayer Item marketplace.
                   </p>
-                  <ul className="list-disc list-inside">
+                  <ul className="list-disc list-inside space-y-2">
                     <li className="mb-1">
                       Limited Supply: 666,666 SL4Y Tokens
-                      <ul className="list-disc list-inside pl-5">
+                      <ul className="list-[square] list-inside pl-5 space-y-2">
                         <li>
                           This total supply number was derived from an
                           approximation of how much it would cost to slay the
@@ -48,13 +48,13 @@ const InfoPanel = () => {
             <AccordionTrigger>VTHO/SL4Y Rates</AccordionTrigger>
             <AccordionContent>
               <SlayerCardContent className="w-full">
-                <div className="flex flex-col w-full pt-8 lg:pt-0 lg:pl-8">
+                <div className="flex flex-col w-full">
                   <p className="mb-2">
                     The Guild Treasury Wallet will accept VTHO donations in set
                     amounts. Each donation will result in receiving SL4Y, the
                     official Slayers Guild token.
                   </p>
-                  <ul className="list-disc list-inside">
+                  <ul className="list-disc list-inside space-y-2">
                     <li className="mb-1">5,000 VTHO = 5 SL4Y</li>
                     <li className="mb-1">10,000 VTHO = 10 SL4Y</li>
                     <li className="mb-1">15,000 VTHO = 20 SL4Y</li>
