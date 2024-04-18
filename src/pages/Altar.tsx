@@ -103,6 +103,7 @@ export default function AltarPage() {
       setErrorMessage(err.message ?? "An error occurred");
     } finally {
       setIsLoading(false);
+      setSelectedValue(1);
     }
   };
 
@@ -206,7 +207,7 @@ export default function AltarPage() {
             </Select>
             <Button
               className="w-full"
-              disabled={isLoading ?? !selectedValue}
+              disabled={isLoading || selectedValue < 5000}
               onClick={handleOffering}
             >
               Submit Offering
