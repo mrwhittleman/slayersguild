@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SlayerCardComponent from "@/components/SlayerCardComponent";
+import { NftListType } from "@/types/types";
 
 const randomSlayer = () => {
   return {
@@ -16,7 +17,7 @@ const cardClasses = [
 ];
 
 const LandingPage = () => {
-  const [slayers, setSlayers] = useState([]);
+  const [slayers, setSlayers] = useState<NftListType[]>([]);
 
   useEffect(() => {
     const cache = JSON.parse(sessionStorage.getItem("slayersCache") || "{}");
@@ -44,7 +45,7 @@ const LandingPage = () => {
       <div className="opacity-55">
         {slayers.map((slayer, index) => (
           <SlayerCardComponent
-            key={index}
+            key={slayer.tokenId}
             slayer={slayer}
             type="dummy"
             className={cardClasses[index]}
