@@ -111,7 +111,7 @@ const MySlayerPage = () => {
 
                     return (
                       <SlayerCardComponent
-                        key={`${token.tokenId}-gallery-${idx}`}
+                        key={`${token.tokenId}-notstaked-${idx}`}
                         slayer={slayer}
                         type="link"
                         className="cursor-pointer outline-4 hover:outline"
@@ -128,7 +128,7 @@ const MySlayerPage = () => {
 
                       return (
                         <SlayerCardComponent
-                          key={`${token.tokenId}-gallery-${idx}`}
+                          key={`${token.tokenId}-staked-${idx}`}
                           slayer={slayer}
                           type="link"
                           staked={true}
