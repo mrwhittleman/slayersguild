@@ -1,7 +1,16 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useConnex, useWallet } from "@vechain/dapp-kit-react";
-import { SLAYER_WALLET, SLAYER_MINT_CONTRACT, NETWORK } from "@/config/index";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SLAYER_WALLET, SLAYER_MINT_CONTRACT } from "@/config/index";
+import { truncateMiddle } from "@/lib/utils";
+import SlayerTokenImage from "@/assets/SL4YR_Token.png";
+import {
+  SlayerCard,
+  SlayerCardContent,
+  SlayerCardFooter,
+  SlayerCardHeader,
+  SlayerCardTitle,
+} from "@/components/ui/slayercard";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,8 +20,12 @@ import {
   SelectContent,
   Select,
 } from "@/components/ui/select";
+import CopyClipboard from "@/components/CopyClipboard";
+import UserInfo from "@/components/UserInfo";
+import TreasuryInfo from "@/components/TreasuryInfo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import InfoPanel from "@/components/InfoPanel";
 
 export default function AltarPage() {
   const connex = useConnex();
@@ -20,6 +33,7 @@ export default function AltarPage() {
   const { toast } = useToast();
   const [selectedValue, setSelectedValue] = React.useState(1);
   const [balance, setBalance] = React.useState(0);
+  const [balanceUser, setBalanceUser] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [txId, setTxId] = React.useState("");
@@ -35,53 +49,50 @@ export default function AltarPage() {
     setTxId("");
 
     try {
-      const vthoValue = `${selectedValue}${"0".repeat(18)}`
+      const vthoValue = `${selectedValue}${"0".repeat(18)}`;
       const approvalClause = connex.thor
         .account("0x0000000000000000000000000000456e65726779")
         .method({
-          "constant": false,
-          "inputs": [
-            { "name": "_spender", "type": "address" },
-            { "name": "_value", "type": "uint256" }
+          constant: false,
+          inputs: [
+            { name: "_spender", type: "address" },
+            { name: "_value", type: "uint256" },
           ],
-          "name": "approve",
-          "outputs": [
-            { "name": "success", "type": "bool" }
-          ],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
+          name: "approve",
+          outputs: [{ name: "success", type: "bool" }],
+          payable: false,
+          stateMutability: "nonpayable",
+          type: "function",
         })
         .asClause(SLAYER_MINT_CONTRACT, vthoValue);
 
       const mintClause = connex.thor
         .account(SLAYER_MINT_CONTRACT)
         .method({
-          "inputs": [
+          inputs: [
             {
-              "internalType": "uint256",
-              "name": "_VTHOAmount",
-              "type": "uint256"
-            }
+              internalType: "uint256",
+              name: "_VTHOAmount",
+              type: "uint256",
+            },
           ],
-          "name": "swapVTHOforSL4Y",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
+          name: "swapVTHOforSL4Y",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
         })
         .asClause(vthoValue);
-
 
       const { txid } = await connex.vendor
         .sign("tx", [
           {
             ...approvalClause,
-            comment: `Approve access to ${selectedValue} VTHO`
+            comment: `Approve access to ${selectedValue} VTHO`,
           },
           {
             ...mintClause,
-            comment: `Sacrifice ${selectedValue} VTHO for SL4Y`
-          }
+            comment: `Sacrifice ${selectedValue} VTHO for SL4Y`,
+          },
         ])
         .comment(`Offering to the treasury of ${selectedValue} VTHO)`)
         .signer(account)
@@ -92,8 +103,30 @@ export default function AltarPage() {
       setErrorMessage(err.message ?? "An error occurred");
     } finally {
       setIsLoading(false);
+      setSelectedValue(1);
     }
   };
+
+  // Display an error toast if there is an error message
+  React.useEffect(() => {
+    if (errorMessage) {
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  }, [errorMessage]);
+
+  React.useEffect(() => {
+    if (txId) {
+      toast({
+        title: "Success",
+        description: "Transaction submitted successfully.",
+        variant: "success",
+      });
+    }
+  }, [txId]);
 
   // get the balance of the slayer treasury
   React.useEffect(() => {
@@ -111,112 +144,103 @@ export default function AltarPage() {
       });
   }, [connex]);
 
-  // error handling of the offering with toast message
+  // get the balance of the logged in account
   React.useEffect(() => {
-    if (errorMessage) {
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
+    if (!connex || !account) {
+      return;
+    }
+    connex.thor
+      .account(account)
+      .get()
+      .then(({ energy }: { energy: string }) => {
+        setBalanceUser(Number(BigInt(energy).toString().slice(0, -18)));
+      })
+      .catch((err: any) => {
+        setErrorMessage(err.message ?? "Could not load user balance.");
       });
-    }
-  }, [errorMessage]);
-
-  // success handling of the offering with toast txId
-  React.useEffect(() => {
-    if (txId) {
-      toast({
-        title: "Success",
-        description: "Your transaction has been sent with ID: " + txId,
-        variant: "success",
-      });
-    }
-  }, [txId]);
-
-  // truncate the txId for display
-  const truncateMiddle = (text: string, maxLength = 20) => {
-    if (text.length <= maxLength) {
-      return text;
-    }
-
-    const start = text.substring(0, maxLength / 2);
-    const end = text.substring(text.length - maxLength / 2, text.length);
-
-    return `${start}...${end}`;
-  };
-
-  // copy txid to clipboard
-  const handleCopy = () => {
-    navigator.clipboard.writeText(txId);
-    toast({
-      title: "Copied",
-      description: "Transaction ID copied to clipboard",
-    });
-  };
-
-  // open an new tab to inspect the txid on vechain exoplorer
-  const handleInspect = () => {
-    window
-      .open(
-        `https://explore-${NETWORK}net.vechain.org/transactions/${txId}`,
-        "_blank"
-      )
-      ?.focus();
-  };
+  }, [connex, account]);
 
   return (
-    <section className="flex flex-col w-full items-center">
-      <Card className="w-full max-w-md bg-slayercard">
-        <CardHeader>
-          <CardTitle className="text-2xl">Offering</CardTitle>
-          <div className="flex gap-4">
-            <p className="">Treasury Balance:</p>
-            <p className="">{balance} VTHO</p>
-          </div>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <Select
-            onValueChange={handleSelectChange}
-            value={String(selectedValue)}
-          >
-            <SelectTrigger id="offering">
-              <SelectValue placeholder="Make An Offering" />
-            </SelectTrigger>
-            <SelectContent position="item-aligned">
-              <SelectItem value="5000">5,000 VTHO</SelectItem>
-              <SelectItem value="10000">10,000 VTHO</SelectItem>
-              <SelectItem value="15000">15,000 VTHO</SelectItem>
-              <SelectItem value="25000">25,000 VTHO</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            className="w-full"
-            disabled={isLoading}
-            onClick={handleOffering}
-          >
-            Submit Offerings
-          </Button>
-
-          {txId && (
-            <div className="bg-success p-4 rounded-lg">
-              <h2>Transaction ID:</h2>
-              <div className="flex justify-between">
-                <p className="flex text-success-foreground truncate">
-                  {truncateMiddle(txId)}
-                </p>
-                <div className="flex gap-4">
-                  <button onClick={handleCopy}>
-                    <FontAwesomeIcon icon={faCopy} />
-                  </button>
-                  <button onClick={handleInspect}>
+    <section className="flex flex-col w-full h-full gap-8 lg:gap-12">
+      <div className="flex flex-col h-fit lg:flex-row w-full gap-8 lg:gap-12 lg:justify-center items-center lg:items-stretch">
+        <UserInfo
+          account={account}
+          balanceUser={balanceUser}
+          selectedValue={selectedValue}
+        />
+        <SlayerCard className="relative w-full max-w-md p-4 overflow-visible">
+          {/*           <div className="absolute top-1/2 -left-3 transform -translate-y-1/2 rotate-90 lg:top-0 lg:left-1/2 lg:-translate-x-1/2 lg:rotate-0">
+            <FontAwesomeIcon
+              className="drop-shadow-lg"
+              icon={faArrowRight}
+              size="xl"
+            />
+          </div> */}
+          <SlayerCardHeader>
+            <SlayerCardTitle className="flex flex-row justify-between text-2xl">
+              Offer
+              <img
+                className="drop-shadow-lg"
+                src={SlayerTokenImage}
+                alt="Slayer Token"
+                width={32}
+              />
+            </SlayerCardTitle>
+            <p className="text-tertiary">
+              Make an offering to the Slayers Guild
+            </p>
+          </SlayerCardHeader>
+          <SlayerCardContent className="flex flex-col gap-6">
+            <Select
+              onValueChange={handleSelectChange}
+              value={String(selectedValue)}
+            >
+              <SelectTrigger id="offering">
+                <SelectValue placeholder="Make An Offering" />
+              </SelectTrigger>
+              <SelectContent position="item-aligned">
+                <SelectItem value="5000">5,000 VTHO</SelectItem>
+                <SelectItem value="10000">10,000 VTHO</SelectItem>
+                <SelectItem value="15000">15,000 VTHO</SelectItem>
+                <SelectItem value="25000">25,000 VTHO</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              className="w-full"
+              disabled={isLoading || selectedValue < 5000}
+              onClick={handleOffering}
+            >
+              Submit Offering
+            </Button>
+          </SlayerCardContent>
+          {!isLoading && txId && (
+            <SlayerCardFooter>
+              <div className="flex flex-col gap-2 pt-6 divide-y">
+                <h2>Tusen takk, your offer was successful!</h2>
+                <div className="flex justify-between pt-2">
+                  <CopyClipboard copyData={txId}>
+                    <p className="flex text-success-foreground truncate">
+                      {truncateMiddle(txId)}
+                    </p>
+                  </CopyClipboard>
+                  <Link
+                    to={`https://explore.vechain.org/transactions/${txId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-4"
+                  >
                     <FontAwesomeIcon icon={faMagnifyingGlass} />
-                  </button>
+                  </Link>
                 </div>
               </div>
-            </div>
+            </SlayerCardFooter>
           )}
-        </CardContent>
-      </Card>
+        </SlayerCard>
+        <TreasuryInfo balance={balance} />
+      </div>
+      <div className="flex justify-center w-full">
+        <InfoPanel />
+      </div>
     </section>
   );
 }

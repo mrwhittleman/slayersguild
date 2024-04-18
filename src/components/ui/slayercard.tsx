@@ -16,6 +16,42 @@ const SlayerCard = React.forwardRef<
 ));
 SlayerCard.displayName = "SlayerCard";
 
+const SlayerCardHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex flex-col space-y-1.5 p-2", className)}
+    {...props}
+  />
+));
+SlayerCardHeader.displayName = "SlayerCardHeader";
+
+const SlayerCardTitle = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref) => (
+  <h3
+    ref={ref}
+    className={cn("font-semibold leading-none", className)}
+    {...props}
+  />
+));
+SlayerCardTitle.displayName = "SlayerCardTitle";
+
+const SlayerCardDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <p
+    ref={ref}
+    className={cn("text-sm text-muted-foreground", className)}
+    {...props}
+  />
+));
+SlayerCardDescription.displayName = "SlayerCardDescription";
+
 const SlayerCardImage = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -40,4 +76,21 @@ const SlayerCardContent = React.forwardRef<
 ));
 SlayerCardContent.displayName = "SlayerCardContent";
 
-export { SlayerCard, SlayerCardImage, SlayerCardHud, SlayerCardContent };
+const SlayerCardFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("p-2", className)} {...props} />
+));
+SlayerCardFooter.displayName = "SlayerCardFooter";
+
+export {
+  SlayerCard,
+  SlayerCardHeader,
+  SlayerCardTitle,
+  SlayerCardDescription,
+  SlayerCardImage,
+  SlayerCardHud,
+  SlayerCardContent,
+  SlayerCardFooter,
+};
