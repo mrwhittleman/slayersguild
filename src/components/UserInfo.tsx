@@ -24,20 +24,12 @@ export default function UserInfo({
   const { name } = useWalletName(account);
   const [showBalanceUser, setShowBalanceUser] = React.useState(false);
 
-  const hanbleClickShowBalance = () => {
+  const handleClickShowBalance = () => {
     setShowBalanceUser(!showBalanceUser);
   };
 
   return (
-    <SlayerCard className="relative w-full max-w-md p-4 overflow-visible">
-      {/*       <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 lg:top-0 lg:left-1/2 lg:-translate-x-1/2">
-        <img
-          className="drop-shadow-lg w-8 h-8 lg:w-10 lg:h-10"
-          src={VthoTokenImage}
-          alt="VTHO Token"
-          width={45}
-        />
-      </div> */}
+    <SlayerCard className="relative w-full h-fit max-w-md p-4 overflow-visible">
       <SlayerCardHeader>
         <SlayerCardTitle className="text-2xl">Wallet Balance</SlayerCardTitle>
         {account && (
@@ -56,7 +48,7 @@ export default function UserInfo({
             <div className="flex flex-col w-full gap-4 divide-y">
               <div className="flex w-full justify-between">
                 <p>Balance:</p>
-                <button onClick={hanbleClickShowBalance}>
+                <button onClick={handleClickShowBalance}>
                   {!showBalanceUser ? (
                     <FontAwesomeIcon icon={faEye} size="lg" />
                   ) : (
