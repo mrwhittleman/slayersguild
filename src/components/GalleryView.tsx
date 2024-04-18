@@ -32,7 +32,7 @@ import Spinner from "@/components/Spinner";
 // Set the maximum number of items
 const MAX_ITEMS = Number(MAX_NFT_SUPPLY);
 // Cache expiry time in milliseconds
-const CACHE_EXPIRY = 5 * 60 * 1000;
+const CACHE_EXPIRY = 30000; // 30 seconds
 
 const GalleryView = () => {
   const cursorRef = useRef("");
@@ -65,7 +65,7 @@ const GalleryView = () => {
         sessionStorage.getItem(`cache_${newPageIndex}`) || "null"
       );
       const isCacheValid =
-        cacheEntry && Date.now() - cacheEntry.timestamp < 30000; // 30 seconds
+        cacheEntry && Date.now() - cacheEntry.timestamp < CACHE_EXPIRY;
 
       if (cacheEntry && isCacheValid) {
         setNfts(cacheEntry.page);
@@ -86,7 +86,7 @@ const GalleryView = () => {
             })
           );
         } catch (err: any) {
-          setErrorMessage(err.message ?? "An error occurred");
+          setErrorMessage(err.message ?? "Could not fetch NFT list.");
         } finally {
           setLoading(false);
         }
