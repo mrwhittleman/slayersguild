@@ -1,13 +1,14 @@
 import React from "react"
 import { useConnex } from "@vechain/dapp-kit-react"
 import { namehash, isAddress, ZeroAddress } from "ethers";
+import { NETWORK } from "@/config";
 
 const MAIN_GENESIS_ID = '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a'
 const TEST_GENESIS_ID = '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'
 
 const MAIN_VET_REGISTRY_ADDRESS = "0xa9231da8BF8D10e2df3f6E03Dd5449caD600129b";
 const TEST_VET_REGISTRY_ADDRESS = "0xcBFB30c1F267914816668d53AcBA7bA7c9806D13"
-const VET_REGISTRY_ADDRESS = process.env.NETWORK === 'main' ? MAIN_VET_REGISTRY_ADDRESS : TEST_VET_REGISTRY_ADDRESS
+const VET_REGISTRY_ADDRESS = NETWORK === 'main' ? MAIN_VET_REGISTRY_ADDRESS : TEST_VET_REGISTRY_ADDRESS
 
 
 export function useWalletName(address: string | null) {
