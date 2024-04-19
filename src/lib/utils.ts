@@ -90,12 +90,16 @@ export async function fetchNftHistoryFromApi(tokenId: string) {
   return data;
 }
 
-export async function stakingCheck(tokenId: string) {
-  const data = await fetchNftHistoryFromApi(tokenId);
-  const stakedEvent = data.page.find(
-    (item: NftHistoryType) => item.event === "Staked"
-  );
-  return stakedEvent.from;
+export async function getOriginalOwner(tokenId: string) {
+  try {
+    const data = await fetchNftHistoryFromApi(tokenId);
+    const stakedEvent = data.page.find(
+      (item: NftHistoryType) => item.event === "Staked"
+    );
+    return stakedEvent.from;
+  } catch (error) {
+    throw new Error("Could not fetch original owner.");
+  }
 }
 
 export async function fetchTransfersFromApi(address: string) {
@@ -107,14 +111,40 @@ export async function fetchTransfersFromApi(address: string) {
   return data;
 }
 
-export async function transfersCheck(address: string) {
-  const data: NftTransferType = await fetchTransfersFromApi(address);
-  const transferEvent = data.page
-    .flatMap((page) => page.transfers)
-    .filter(
-      (transfer) =>
-        transfer.from === address && transfer.to === WOV_STAKING_ADDRESS
-    )
-    .sort((a, b) => Number(a.tokenId) - Number(b.tokenId));
-  return transferEvent;
+export async function stakedCheck(address: string): Promise<
+  {
+    contract: string;
+    from: string;
+    to: string;
+    tokenId: string;
+    amount: string;
+  }[]
+> {
+  try {
+    const data: NftTransferType = await fetchTransfersFromApi(address);
+    const transfers = data.page.flatMap((page) => page.transfers);
+
+    // Filter for staked transfers
+    const stakeTransfers = transfers.filter(
+      (item) => item.from === address && item.to === WOV_STAKING_ADDRESS
+    );
+
+    // Filter for unstaked transfers
+    const unstakeTransfers = transfers.filter(
+      (item) => item.to === address && item.from === WOV_STAKING_ADDRESS
+    );
+
+    // Get staked tokens that have not been unstaked and sort them
+    const stakedSlayers = stakeTransfers
+      .filter(
+        (staked) =>
+          !unstakeTransfers.some(
+            (unstaked) => unstaked.tokenId === staked.tokenId
+          )
+      )
+      .sort((a, b) => parseInt(a.tokenId) - parseInt(b.tokenId));
+    return stakedSlayers;
+  } catch (error) {
+    throw new Error("Could not fetch stakedNfts.");
+  }
 }

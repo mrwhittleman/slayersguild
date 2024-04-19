@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { useWallet } from "@vechain/dapp-kit-react";
 import { useWalletName } from "@/hooks/useWalletName";
 import { useNftList } from "@/hooks/useNftList";
-import { transfersCheck, truncateMiddle } from "@/lib/utils";
+import { stakedCheck, truncateMiddle } from "@/lib/utils";
 import { WOV_URL } from "@/config";
-import { NftListType, StakedNftType } from "@/types/types";
+import { AllSlayersType, NftListType, StakedNftType } from "@/types/types";
+import { useToast } from "@/components/ui/use-toast";
 import { Grid, GridContent, GridGallery } from "@/components/ui/grid";
 import Spinner from "@/components/Spinner";
 import SlayerCardComponent from "@/components/SlayerCardComponent";
@@ -14,29 +15,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
 const MySlayerPage = () => {
+  const { toast } = useToast();
   const wallet = useWallet();
   const { name } = useWalletName(wallet.account);
-  const {
-    balance,
-    isLoading: loadingNftList,
-    tokens,
-  } = useNftList(wallet.account);
+  const { isLoading: loadingNftList, tokens } = useNftList(wallet.account);
   const [stakedSlayers, setStakedSlayers] = useState<StakedNftType[]>([]);
+  const [allSlayers, setAllSlayers] = useState<AllSlayersType[]>([]);
   const [loadingTransferCheck, setLoadingTransferCheck] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const isLoading = loadingNftList || loadingTransferCheck;
 
-  // Check if wallet account is connected and check the transfers of the current wallet account for transfers to the staking contract and set the stakedNfts state
   useEffect(() => {
     const loadData = async () => {
       setLoadingTransferCheck(true);
-      const cache = JSON.parse(
-        sessionStorage.getItem("stakedTokensCache") || "{}"
-      );
-      let data = cache.data || [];
-      const lastUpdated = cache.lastUpdated;
-
-      if (!lastUpdated || Date.now() - lastUpdated > 30000) {
-        data = await transfersCheck(wallet.account!);
+      try {
+        const data = await stakedCheck(wallet.account!);
         sessionStorage.setItem(
           "stakedTokensCache",
           JSON.stringify({
@@ -44,18 +37,51 @@ const MySlayerPage = () => {
             lastUpdated: Date.now(),
           })
         );
+        setStakedSlayers(data);
+      } catch (err: any) {
+        setErrorMessage(err.message ?? "Could not fetch stakedNfts.");
+      } finally {
+        setLoadingTransferCheck(false);
       }
-
-      setStakedSlayers(data);
-      setLoadingTransferCheck(false);
     };
 
-    if (wallet.account) {
+    const cache = JSON.parse(
+      sessionStorage.getItem("stakedTokensCache") || "{}"
+    );
+    const lastUpdated = cache.lastUpdated;
+
+    if (
+      wallet.account &&
+      !loadingNftList &&
+      (!lastUpdated || Date.now() - lastUpdated > 30000)
+    ) {
       loadData();
+    } else if (wallet.account && cache.data) {
+      setStakedSlayers(cache.data);
     }
   }, [wallet.account]);
 
-  // If wallet account is not connected, display a message to connect the wallet
+  useEffect(() => {
+    const markedStakedSlayers = stakedSlayers.map((slayer) => ({
+      ...slayer,
+      staked: true,
+    }));
+    const allSlayers = [...tokens, ...markedStakedSlayers].sort(
+      (a, b) => parseInt(a.tokenId) - parseInt(b.tokenId)
+    );
+    setAllSlayers(allSlayers);
+  }, [stakedSlayers, tokens]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  }, [errorMessage]);
+
   if (!wallet.account) {
     return (
       <div className="flex flex-col w-full items-center gap-4">
@@ -65,7 +91,7 @@ const MySlayerPage = () => {
       </div>
     );
   }
-  // If wallet account is connected, display the slayer collection of the wallet account (staked and not staked slayers)
+
   return (
     <div className="flex flex-col w-full">
       {/* WELCOME MESSAGE AND WALLET ACCOUNT INFO */}
@@ -100,45 +126,27 @@ const MySlayerPage = () => {
           /* SLAYER VIEW */
           <Grid className="grid-cols-1 lg:grid-cols-2 divide-x-0 lg:divide-x divide-y lg:divide-y-0">
             <GridContent className="pr-0 lg:pr-8 pb-8 lg:pb-0">
-              {tokens.length > 0 || stakedSlayers.length > 0 ? (
-                <GridGallery>
-                  {/* NOT STAKED SLAYERS */}
-                  {tokens.map((token, idx) => {
+              <GridGallery>
+                {/* NOT STAKED SLAYERS */}
+                {allSlayers.length > 0 &&
+                  allSlayers.map((item, idx) => {
                     const slayer = {
-                      tokenId: token.tokenId,
+                      tokenId: item.tokenId,
                       owner: wallet.account,
                     } as NftListType;
 
                     return (
                       <SlayerCardComponent
-                        key={`${token.tokenId}-notstaked-${idx}`}
+                        key={`${item.tokenId}-notstaked-${idx}`}
                         slayer={slayer}
                         type="link"
                         className="cursor-pointer outline-4 hover:outline"
+                        staked={item.staked && item.staked}
                       />
                     );
                   })}
-                  {/* STAKED SLAYERS */}
-                  {stakedSlayers.map(
-                    (token: { tokenId: string }, idx: number) => {
-                      const slayer = {
-                        tokenId: token.tokenId,
-                        owner: wallet.account,
-                      } as NftListType;
-
-                      return (
-                        <SlayerCardComponent
-                          key={`${token.tokenId}-staked-${idx}`}
-                          slayer={slayer}
-                          type="link"
-                          staked={true}
-                          className="cursor-pointer outline-4 hover:outline"
-                        />
-                      );
-                    }
-                  )}
-                </GridGallery>
-              ) : (
+              </GridGallery>
+              {tokens.length === 0 && stakedSlayers.length === 0 && (
                 /* If no slayers found -> info + buy button */
                 <div className="flex flex-col w-full h-full justify-center items-center gap-4">
                   <p className="text-2xl">No Slayer found.</p>
@@ -155,25 +163,7 @@ const MySlayerPage = () => {
             </GridContent>
             {/* FILLER FOR FUTURE STUFF */}
             <GridContent className="flex-col gap-4 justify-start lg:items-start pl-0 lg:pl-8 pt-8 lg:pt-0">
-              <p className="max-w-md">
-                In the realm of Eldoria, 666 fierce warriors known as Slayers,
-                inspired by Nordic mythology, rose to confront the spreading
-                chaos caused by the proliferation of X-Nodes. These Slayers,
-                clad in rugged armor and wielding ancient weapons, embarked on a
-                perilous quest led by High Chief Ragnar Stormheart. Along their
-                journey, they battled monsters and confronted dark forces,
-                forging bonds of brotherhood amidst the crucible of battle.
-                <br />
-                <br />
-                Their ultimate adversary was the Archon of the X-Nodes, a
-                powerful entity threatening to engulf Eldoria in darkness. In a
-                climactic showdown, the Slayers vanquished the Archon and
-                destroyed the X-Nodes, restoring peace to their land. Though
-                their quest was over, the Slayers remained vigilant, ready to
-                face new threats and protect Eldoria from the shadows that
-                lurked beyond.
-              </p>
-              <h1>Soon&trade;</h1>
+              <h1>Coming soon...</h1>
             </GridContent>
           </Grid>
         )}
