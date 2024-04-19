@@ -4,7 +4,7 @@ import { useWallet } from "@vechain/dapp-kit-react";
 import { useMetadata } from "@/hooks/useMetadata";
 import { useWalletName } from "@/hooks/useWalletName";
 import { usePerPage } from "@/hooks/usePerPage";
-import { stakingCheck, truncateMiddle } from "@/lib/utils";
+import { getOriginalOwner, truncateMiddle } from "@/lib/utils";
 import { WOV_STAKING_ADDRESS, API_URL } from "@/config";
 import { NftListType } from "@/types/types";
 import { useToast } from "@/components/ui/use-toast";
@@ -61,18 +61,22 @@ const SlayerDetailsPage = () => {
     }
     setLoading(true);
     setStaked(true);
-    stakingCheck(slayer.tokenId)
-      .then((owner) => {
+    const originalOwner = async () => {
+      try {
+        const data = await getOriginalOwner(slayer.tokenId);
+        console.log(data);
         setSlayer((prev) => ({
           ...prev,
-          owner,
+          owner: data,
           tokenId: prev?.tokenId ?? slayer.tokenId,
         }));
-      })
-      .catch((err: any) => {
+      } catch (err: any) {
         setErrorMessage(err.message ?? "Could not load the original owner.");
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+    originalOwner();
   }, [slayer]);
 
   //
