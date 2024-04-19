@@ -38,6 +38,59 @@ export default function AltarPage() {
   const [errorMessage, setErrorMessage] = React.useState("");
   const [txId, setTxId] = React.useState("");
 
+  // Display an error toast if there is an error message
+  React.useEffect(() => {
+    if (errorMessage) {
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  }, [errorMessage]);
+
+  React.useEffect(() => {
+    if (txId) {
+      toast({
+        title: "Success",
+        description: "Transaction submitted successfully.",
+        variant: "success",
+      });
+    }
+  }, [txId]);
+
+  // get the balance of the slayer treasury
+  React.useEffect(() => {
+    if (!connex) {
+      return;
+    }
+    connex.thor
+      .account(SLAYER_WALLET)
+      .get()
+      .then(({ energy }: { energy: string }) => {
+        setBalance(Number(BigInt(energy).toString().slice(0, -18)));
+      })
+      .catch((err: any) => {
+        setErrorMessage(err.message ?? "Could not load treasure balance.");
+      });
+  }, [connex]);
+
+  // get the balance of the logged in account
+  React.useEffect(() => {
+    if (!connex || !account) {
+      return;
+    }
+    connex.thor
+      .account(account)
+      .get()
+      .then(({ energy }: { energy: string }) => {
+        setBalanceUser(Number(BigInt(energy).toString().slice(0, -18)));
+      })
+      .catch((err: any) => {
+        setErrorMessage(err.message ?? "Could not load user balance.");
+      });
+  }, [connex, account]);
+
   const handleSelectChange = (value: string) => {
     setSelectedValue(parseInt(value));
   };
@@ -107,59 +160,6 @@ export default function AltarPage() {
     }
   };
 
-  // Display an error toast if there is an error message
-  React.useEffect(() => {
-    if (errorMessage) {
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
-  }, [errorMessage]);
-
-  React.useEffect(() => {
-    if (txId) {
-      toast({
-        title: "Success",
-        description: "Transaction submitted successfully.",
-        variant: "success",
-      });
-    }
-  }, [txId]);
-
-  // get the balance of the slayer treasury
-  React.useEffect(() => {
-    if (!connex) {
-      return;
-    }
-    connex.thor
-      .account(SLAYER_WALLET)
-      .get()
-      .then(({ energy }: { energy: string }) => {
-        setBalance(Number(BigInt(energy).toString().slice(0, -18)));
-      })
-      .catch((err: any) => {
-        setErrorMessage(err.message ?? "Could not load treasure balance.");
-      });
-  }, [connex]);
-
-  // get the balance of the logged in account
-  React.useEffect(() => {
-    if (!connex || !account) {
-      return;
-    }
-    connex.thor
-      .account(account)
-      .get()
-      .then(({ energy }: { energy: string }) => {
-        setBalanceUser(Number(BigInt(energy).toString().slice(0, -18)));
-      })
-      .catch((err: any) => {
-        setErrorMessage(err.message ?? "Could not load user balance.");
-      });
-  }, [connex, account]);
-
   return (
     <section className="flex flex-col w-full h-full gap-8 lg:gap-12">
       <div className="flex flex-col h-fit lg:flex-row w-full gap-8 lg:gap-12 lg:justify-center items-center lg:items-stretch">
@@ -207,7 +207,7 @@ export default function AltarPage() {
             </Select>
             <Button
               className="w-full"
-              disabled={isLoading || selectedValue < 5000}
+              disabled={isLoading || selectedValue < 5000 || !account}
               onClick={handleOffering}
             >
               Submit Offering
