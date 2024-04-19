@@ -93,7 +93,7 @@ export default function UserInfo({
         </SlayerCardContent>
       ) : (
         <SlayerCardContent>
-          <p className="text-center">Please connect your wallet</p>
+          <p>Please connect your wallet</p>
         </SlayerCardContent>
       )}
     </SlayerCard>
