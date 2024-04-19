@@ -47,3 +47,8 @@ export type StakedNftType = {
   tokenId: string;
   amount?: string;
 };
+
+export type AllSlayersType = {
+  tokenId: string;
+  staked?: boolean;
+};
