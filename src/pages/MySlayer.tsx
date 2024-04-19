@@ -146,20 +146,22 @@ const MySlayerPage = () => {
                     );
                   })}
               </GridGallery>
-              {tokens.length === 0 && stakedSlayers.length === 0 && (
-                /* If no slayers found -> info + buy button */
-                <div className="flex flex-col w-full h-full justify-center items-center gap-4">
-                  <p className="text-2xl">No Slayer found.</p>
-                  <Link
-                    to={`${WOV_URL}/collection/Slayers`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center px-4 py-2 rounded-lg bg-tertiary hover:bg-tertiary/65 hover:scale-110 transition-all"
-                  >
-                    <FontAwesomeIcon icon={faCartShopping} size="xl" />
-                  </Link>
-                </div>
-              )}
+              {tokens.length === 0 &&
+                stakedSlayers.length === 0 &&
+                !errorMessage && (
+                  /* If no slayers found -> info + buy button */
+                  <div className="flex flex-col w-full h-full justify-center items-center gap-4">
+                    <p className="text-2xl">No Slayer found.</p>
+                    <Link
+                      to={`${WOV_URL}/collection/Slayers`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center px-4 py-2 rounded-lg bg-tertiary hover:bg-tertiary/65 hover:scale-110 transition-all"
+                    >
+                      <FontAwesomeIcon icon={faCartShopping} size="xl" />
+                    </Link>
+                  </div>
+                )}
             </GridContent>
             {/* FILLER FOR FUTURE STUFF */}
             <GridContent className="flex-col gap-4 justify-start lg:items-start pl-0 lg:pl-8 pt-8 lg:pt-0">
